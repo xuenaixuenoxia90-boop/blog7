@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="拉杆吧 - 视频详情" css={['video.css']}>
+<div class="page">
+    <!-- 顶部 -->
+    <div class="topbar">
+        <!-- 左边 -->
+        <div class="left-info">
+            <button class="back-btn" onclick="goBackToList('/videos')">← <span data-cn="返回" data-en="Back">返回</span></button>
+            <div class="logo-wrap">
+                <div class="logo" data-cn="拉杆吧" data-en="SWUB Zone">拉杆吧</div>
+                <div class="desc" data-cn="唤醒国男的街健梦！" data-en="Wake up your street workout dream!">唤醒国男的街健梦！</div>
+            </div>
+        </div>
+        <!-- 右边 -->
+        <div class="right-area">
+            <div class="video-title" data-cn="街头健身入门教学" data-en="Street Fitness Basics Tutorial">街头健身入门教学</div>
+            <div class="language-box">
+                <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
+                <div class="language-dropdown">
+                    <button class="language-item" onclick="switchLanguage('zh')">简体中文</button>
+                    <button class="language-item" onclick="switchLanguage('en')">English</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 中央视频 -->
+    <div class="video-section">
+        <div class="video-box">
+            <div class="play-btn">
+                <div class="play-icon"></div>
+            </div>
+            <div class="video-text" data-cn="VIDEO" data-en="VIDEO">VIDEO</div>
+        </div>
+    </div>
+</div>
+</BaseLayout>

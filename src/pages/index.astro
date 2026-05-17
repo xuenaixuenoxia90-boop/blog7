@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="GOGO小白的博客" css={['index.css']}>
+
+<!-- 登录动画 -->
+
+<div id="intro">
+    <div class="avatar-big">
+        <img src="https://picsum.photos/500/500?random=11">
+    </div>
+</div>
+
+<!-- 主页面 -->
+
+<div class="main-page" id="mainPage">
+
+    <div class="top-bar">
+
+        <div class="left-top">
+
+            <div class="small-avatar" id="targetAvatar">
+                <img src="https://picsum.photos/500/500?random=11">
+            </div>
+
+            <div class="blog-box">
+
+                <h1 data-cn="GOGO小白的博客" data-en="GOGO White's Blog">
+                    GOGO小白的博客
+                </h1>
+
+                <p data-cn="从前有个爱拉杆的计算机" data-en="Once there was a computer who loved pull-ups">
+                    从前有个爱拉杆的计算机
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="language-box">
+
+            <button class="language-btn" id="currentLang">
+                <span class="lang-icon">🌐</span>
+                <span class="lang-text">简体中文</span>
+            </button>
+
+            <div class="language-dropdown">
+
+                <button class="language-item" onclick="switchLanguage('zh')">
+                    简体中文
+                </button>
+
+                <button class="language-item" onclick="switchLanguage('en')">
+                    English
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 卡片 -->
+
+    <div class="menu-grid">
+
+        <div class="menu-card" onclick="navigateTo('/articles')">
+
+            <div class="card-cover">
+                <img src="https://picsum.photos/400/400?random=1">
+            </div>
+
+            <div class="card-content">
+
+                <h2 data-cn="挖洞吧" data-en="Hack Zone">
+                    挖洞吧
+                </h2>
+
+                <p data-cn="探索安全漏洞的奥秘" data-en="Explore the mysteries of security vulnerabilities">
+                    探索安全漏洞的奥秘
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-card" onclick="navigateTo('/tools')">
+
+            <div class="card-cover">
+                <img src="https://picsum.photos/400/400?random=2">
+            </div>
+
+            <div class="card-content">
+
+                <h2 data-cn="工具分享" data-en="Tool Share">
+                    工具分享
+                </h2>
+
+                <p data-cn="打造专属于你的最强工具箱" data-en="Build your own ultimate toolbox">
+                    打造专属于你的最强工具箱
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-card" onclick="navigateTo('/videos')">
+
+            <div class="card-cover">
+                <img src="https://picsum.photos/400/400?random=3">
+            </div>
+
+            <div class="card-content">
+
+                <h2 data-cn="拉杆吧" data-en="SWUB Zone">
+                    拉杆吧
+                </h2>
+
+                <p data-cn="SWUB 爆勒战神" data-en="SWUB Explosion God of War">
+                    SWUB 爆勒战神
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="menu-card" onclick="navigateTo('/gallery')">
+
+            <div class="card-cover">
+                <img src="https://picsum.photos/400/400?random=4">
+            </div>
+
+            <div class="card-content">
+
+                <h2 data-cn="赏图吧" data-en="Gallery">
+                    赏图吧
+                </h2>
+
+                <p data-cn="此时无声胜有声" data-en="Silence speaks louder">
+                    此时无声胜有声
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+        开源免费个人分享平台
+    </div>
+
+</div>
+
+</BaseLayout>

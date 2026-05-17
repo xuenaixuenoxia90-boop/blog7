@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="拉杆吧" css={['videos.css']}>
+<div class="page">
+    <!-- 左广告 -->
+    <div class="side-ad"></div>
+    <!-- 中间内容 -->
+    <div class="main">
+        <!-- 顶部 -->
+        <div class="header">
+            <div class="top-bar">
+                <!-- 返回 -->
+                <button class="back-btn" onclick="goBackToHome()">
+                    ←
+                    <span data-cn="返回" data-en="Back">返回</span>
+                </button>
+                <!-- 标题 -->
+                <div class="title-box">
+                    <div class="title" data-cn="拉杆吧" data-en="SWUB Zone">拉杆吧</div>
+                    <div class="sub-title" data-cn="唤醒国男的街健梦！" data-en="Wake up your street workout dream!">唤醒国男的街健梦！</div>
+                </div>
+                <!-- 语言切换 -->
+                <div class="language-box">
+                    <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
+                    <div class="language-dropdown">
+                        <button class="language-item" onclick="switchLanguage('zh')">简体中文</button>
+                        <button class="language-item" onclick="switchLanguage('en')">English</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 搜索 -->
+            <div class="search-row">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索视频标题..." />
+                </div>
+                <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search">🔍 搜索</button>
+            </div>
+        </div>
+        <!-- 视频列表 -->
+        <div class="video-wrapper">
+            <div class="video-grid">
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?10">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="街头健身入门教学" data-en="Street Fitness Basics Tutorial">街头健身入门教学</div>
+                        <div class="video-desc" data-cn="从零开始学习街头健身，掌握基础动作要领。" data-en="Learn street fitness from scratch, master the basics.">从零开始学习街头健身，掌握基础动作要领。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?11">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="人体旗帜教程" data-en="Human Flag Tutorial">人体旗帜教程</div>
+                        <div class="video-desc" data-cn="一步一步教你解锁人体旗帜动作。" data-en="Step by step guide to unlocking the human flag.">一步一步教你解锁人体旗帜动作。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?12">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="前水平进阶训练" data-en="Front Lever Advanced Training">前水平进阶训练</div>
+                        <div class="video-desc" data-cn="从基础到高级，突破前水平瓶颈。" data-en="From basic to advanced, break through the front lever bottleneck.">从基础到高级，突破前水平瓶颈。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?13">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="双力臂完整教学" data-en="Muscle-Up Complete Tutorial">双力臂完整教学</div>
+                        <div class="video-desc" data-cn="双力臂技巧详解，包含多种变式。" data-en="Detailed muscle-up techniques, including variations.">双力臂技巧详解，包含多种变式。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?14">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="俄式挺身教程" data-en="Planche Tutorial">俄式挺身教程</div>
+                        <div class="video-desc" data-cn="从零到俄式挺身的完整训练计划。" data-en="Complete training plan from zero to planche.">从零到俄式挺身的完整训练计划。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?15">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="倒立撑教学" data-en="Handstand Push-Up Tutorial">倒立撑教学</div>
+                        <div class="video-desc" data-cn="倒立撑基础到进阶训练方法。" data-en="Handstand push-up training from basic to advanced.">倒立撑基础到进阶训练方法。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?16">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="单手引体教程" data-en="One Arm Pull-Up Tutorial">单手引体教程</div>
+                        <div class="video-desc" data-cn="单手引体训练方法与辅助练习。" data-en="One arm pull-up training methods and assistance exercises.">单手引体训练方法与辅助练习。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?17">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="暴力上杠教学" data-en="Bar Muscle-Up Tutorial">暴力上杠教学</div>
+                        <div class="video-desc" data-cn="从爆发力到协调性，掌握暴力上杠。" data-en="From power to coordination, master the bar muscle-up.">从爆发力到协调性，掌握暴力上杠。</div>
+                    </div>
+                </div>
+                <div class="video-card" onclick="navigateTo('/video')">
+                    <div class="video-cover">
+                        <img src="https://picsum.photos/400/300?18">
+                        <div class="play-icon">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title" data-cn="核心力量训练" data-en="Core Strength Training">核心力量训练</div>
+                        <div class="video-desc" data-cn="街头健身必备的核心力量训练方案。" data-en="Essential core strength training for street fitness.">街头健身必备的核心力量训练方案。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 右广告 -->
+    <div class="side-ad"></div>
+</div>
+</BaseLayout>

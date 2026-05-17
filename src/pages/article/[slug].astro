@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={`${post.data.title} - 挖洞吧`} css={['article.css']}>
+<div class="container">
+    <div class="side-space"></div>
+    <div class="main">
+        <div class="top-bar">
+            <div class="top-left">
+                <button class="back-btn" onclick="goBackToList('/articles')">
+                    <span>←</span>
+                    <span data-cn="返回" data-en="Back">返回</span>
+                </button>
+                <div class="header">
+                    <h1 data-cn="挖洞吧" data-en="Hack Zone">挖洞吧</h1>
+                    <p data-cn="漏洞分析与复现" data-en="Vulnerability Analysis and Reproduction">漏洞分析与复现</p>
+                </div>
+            </div>
+            <div class="language-box">
+                <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
+                <div class="language-dropdown">
+                    <button class="language-item" onclick="switchLanguage('zh')">简体中文</button>
+                    <button class="language-item" onclick="switchLanguage('en')">English</button>
+                </div>
+            </div>
+        </div>
+        <div class="content-layout">
+            <div class="article">
+                <h2 class="article-title">{post.data.title}</h2>
+                <div class="markdown-content">
+                  <Content />
+                </div>
+            </div>
+            <div class="right-box"></div>
+        </div>
+        <div class="footer-bar">
+            <button class="footer-btn page-btn" onclick="goBackToList('/articles')" data-cn="← 返回列表" data-en="← Back to List">← 返回列表</button>
+            <button class="footer-btn page-btn" data-cn="上一篇" data-en="Previous">上一篇</button>
+            <button class="footer-btn page-btn" data-cn="下一篇" data-en="Next">下一篇</button>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-float">
+    <button class="scroll-btn-top" onclick="scrollToTop()" title="置顶">⬆️</button>
+    <button class="scroll-btn-bottom" onclick="scrollToBottom()" title="置底">⬇️</button>
+</div>
+</BaseLayout>

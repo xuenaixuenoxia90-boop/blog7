@@ -1,0 +1,237 @@
+/* ================= 赏图吧（图片页）专用样式 ================= */
+
+body{
+    background:#eef1f7;
+    font-family:"Microsoft YaHei",sans-serif;
+    overflow-y:auto;
+}
+
+/* 页面 */
+.page{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 0;
+}
+
+/* 左右广告位 */
+.ad-left,
+.ad-right{
+    width:120px;
+    min-height:92vh;
+    border-radius:28px;
+}
+
+/* 中间内容 */
+.main{
+    width:1320px;
+    margin:0 34px;
+}
+
+/* 顶部 */
+.header{
+    margin-bottom:24px;
+}
+
+.top-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+}
+
+/* 左侧区域 */
+.left-wrap{
+    display:flex;
+    align-items:flex-start;
+    gap:22px;
+}
+
+/* 返回按钮 */
+.back-btn{
+    width:108px;
+    height:50px;
+    border:none;
+    border-radius:18px;
+    background:white;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+    font-size:22px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.back-btn:hover{
+    transform:translateY(-2px);
+    background:#f8f9ff;
+}
+
+/* LOGO区域 */
+.logo-wrap{
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    font-size:64px;
+    font-weight:900;
+    color:#171717;
+    line-height:1;
+    letter-spacing:2px;
+}
+
+.desc{
+    margin-top:10px;
+    font-size:22px;
+    color:#666;
+}
+
+/* 瀑布流 */
+.gallery{
+    column-count:3;
+    column-gap:24px;
+}
+
+/* 卡片 */
+.card{
+    width:100%;
+    margin-bottom:24px;
+    break-inside:avoid;
+    border-radius:28px;
+    overflow:hidden;
+    background:white;
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+}
+
+.card img{
+    width:100%;
+    display:block;
+}
+
+/* 加载文字 */
+.loading{
+    width:100%;
+    text-align:center;
+    padding:28px 0 10px;
+    color:#7b8190;
+    font-size:18px;
+}
+
+/* ================= 响应式设计 ================= */
+
+@media(max-width:1600px){
+    .main{
+        width:1180px;
+    }
+    .logo{
+        font-size:56px;
+    }
+    .desc{
+        font-size:20px;
+    }
+}
+
+@media(max-width:1200px){
+    .main{
+        width:900px;
+    }
+    .gallery{
+        column-count:2;
+        column-gap:20px;
+    }
+}
+
+@media(max-width:900px){
+    body{
+        overflow-y:auto;
+        height:auto;
+    }
+
+    .page{
+        padding:16px;
+    }
+
+    .main{
+        width:100%;
+    }
+
+    .header{
+        position:relative;
+        padding-right:54px;
+    }
+
+    .top-row{
+        display:flex;
+        justify-content:flex-start;
+        align-items:flex-start;
+        gap:16px;
+        margin-bottom:24px;
+    }
+
+    .language-box{
+        position:absolute;
+        right:0;
+        top:0;
+        z-index:10;
+    }
+
+    .language-btn{
+        width:44px;
+        height:44px;
+        padding:0;
+        border-radius:50%;
+    }
+
+    .lang-text{
+        display:none;
+    }
+
+    .lang-icon{
+        font-size:22px;
+    }
+
+    .language-dropdown{
+        right:0;
+        left:auto;
+    }
+
+    .left-wrap{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .logo{
+        font-size:36px;
+    }
+
+    .desc{
+        font-size:16px;
+    }
+
+    .back-btn{
+        padding:12px 20px;
+        font-size:16px;
+    }
+
+    .gallery{
+        column-count:2;
+        column-gap:12px;
+    }
+
+    .card{
+        margin-bottom:12px;
+        border-radius:16px;
+    }
+}
+
+@media(max-width:480px){
+    .logo{
+        font-size:28px;
+    }
+}

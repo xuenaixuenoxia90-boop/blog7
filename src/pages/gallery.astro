@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="赏图吧" css={['gallery.css']}>
+
+<div class="page">
+
+    <!-- 左广告 -->
+    <div class="ad-left"></div>
+
+    <!-- 中间 -->
+    <div class="main">
+
+        <!-- 顶部 -->
+        <div class="header">
+
+            <div class="top-row">
+
+                <div class="left-wrap">
+
+                    <button class="back-btn" onclick="goBackToHome()">
+                        ← <span data-cn="返回" data-en="Back">返回</span>
+                    </button>
+
+                    <div class="logo-wrap">
+                        <div class="logo" data-cn="赏图吧" data-en="Gallery">赏图吧</div>
+                        <div class="desc" data-cn="此时无声胜有声" data-en="Silence speaks louder">此时无声胜有声</div>
+                    </div>
+
+                </div>
+
+                <!-- 语言切换 -->
+                <div class="language-box">
+                    <button class="language-btn" id="currentLang">
+                        <span class="lang-icon">🌐</span>
+                        <span class="lang-text">简体中文</span>
+                    </button>
+                    <div class="language-dropdown">
+                        <button class="language-item" onclick="switchLanguage('zh')">简体中文</button>
+                        <button class="language-item" onclick="switchLanguage('en')">English</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 瀑布流 -->
+        <div class="gallery">
+
+            <div class="card">
+                <img src="https://picsum.photos/500/700?20">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/400?21">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/600?22">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/500?23">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/650?24">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/450?25">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/550?26">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/700?27">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/400?28">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/620?29">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/480?30">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/720?31">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/520?32">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/580?33">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/460?34">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/640?35">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/540?36">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/680?37">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/420?38">
+            </div>
+
+            <div class="card">
+                <img src="https://picsum.photos/500/660?39">
+            </div>
+
+        </div>
+
+        <!-- 加载提示 -->
+        <div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>
+
+    </div>
+
+    <!-- 右广告 -->
+    <div class="ad-right"></div>
+
+</div>
+
+</BaseLayout>

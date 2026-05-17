@@ -1,0 +1,397 @@
+/* ================= 视频详情页专用样式 ================= */
+
+body{
+    width:100%;
+    height:100vh;
+    overflow:hidden;
+    font-family:"Microsoft YaHei",sans-serif;
+    background:linear-gradient(rgba(5,10,35,0.72),rgba(5,10,35,0.78)),url("https://picsum.photos/1920/1080?blur=1") center/cover no-repeat;
+    color:white;
+    position:relative;
+}
+
+/* 星空效果 */
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+        radial-gradient(2px 2px at 10% 20%,rgba(255,255,255,.9),transparent),
+        radial-gradient(2px 2px at 30% 70%,rgba(255,255,255,.8),transparent),
+        radial-gradient(2px 2px at 70% 40%,rgba(255,255,255,.7),transparent),
+        radial-gradient(2px 2px at 80% 10%,rgba(255,255,255,.9),transparent),
+        radial-gradient(2px 2px at 90% 80%,rgba(255,255,255,.8),transparent),
+        radial-gradient(1px 1px at 60% 60%,rgba(255,255,255,.7),transparent),
+        radial-gradient(1px 1px at 40% 30%,rgba(255,255,255,.7),transparent);
+    pointer-events:none;
+}
+
+.page{
+    width:100%;
+    height:100vh;
+    padding:24px 42px;
+    display:flex;
+    flex-direction:column;
+}
+
+/* 顶部 */
+.topbar{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+}
+
+/* 左边区域 */
+.left-info{
+    display:flex;
+    align-items:flex-start;
+    gap:24px;
+}
+
+/* 返回按钮 */
+.back-btn{
+    width:120px;
+    height:52px;
+    border:none;
+    border-radius:16px;
+    background:rgba(255,255,255,.16);
+    backdrop-filter:blur(10px);
+    color:white;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+    margin-top:6px;
+}
+
+.back-btn:hover{
+    background:rgba(255,255,255,.28);
+    transform:translateY(-2px);
+}
+
+/* logo */
+.logo-wrap{
+    display:flex;
+    flex-direction:column;
+}
+
+.logo{
+    font-size:64px;
+    font-weight:900;
+    line-height:1;
+    letter-spacing:2px;
+}
+
+.desc{
+    margin-top:10px;
+    font-size:22px;
+    color:rgba(255,255,255,.82);
+}
+
+/* 右边 */
+.right-area{
+    display:flex;
+    align-items:flex-start;
+    gap:24px;
+}
+
+/* 语言切换 */
+.language-box{
+    position:relative;
+}
+
+.language-btn{
+    width:180px;
+    height:54px;
+    border:none;
+    border-radius:18px;
+    background:rgba(255,255,255,.16);
+    backdrop-filter:blur(10px);
+    color:white;
+    font-size:18px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+}
+
+.lang-icon{
+    font-size:22px;
+}
+
+.language-btn:hover{
+    background:rgba(255,255,255,.24);
+    transform:translateY(-2px);
+}
+
+/* 下拉栏 */
+.language-dropdown{
+    position:absolute;
+    top:66px;
+    left:0;
+    width:180px;
+    background:rgba(16,18,40,.95);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-10px);
+    transition:.25s;
+}
+
+.language-box:hover .language-dropdown{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+}
+
+.language-item{
+    width:100%;
+    padding:18px;
+    font-size:18px;
+    font-weight:700;
+    border:none;
+    background:none;
+    color:white;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.language-item:hover{
+    background:rgba(255,255,255,.08);
+}
+
+/* 视频标题 */
+.video-title{
+    margin-top:8px;
+    font-size:52px;
+    font-weight:900;
+    white-space:nowrap;
+    text-align:right;
+}
+
+/* 中央区域 */
+.video-section{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* 视频框 */
+.video-box{
+    width:72%;
+    height:66vh;
+    border-radius:34px;
+    overflow:hidden;
+    position:relative;
+    background:linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,.45)),url("https://picsum.photos/1400/800") center/cover no-repeat;
+    box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.08);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* 播放按钮 */
+.play-btn{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    background:rgba(255,255,255,.14);
+    backdrop-filter:blur(12px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.3s;
+    border:2px solid rgba(255,255,255,.16);
+}
+
+.play-btn:hover{
+    transform:scale(1.08);
+    background:rgba(255,255,255,.2);
+}
+
+/* 三角 */
+.play-icon{
+    margin-left:10px;
+    width:0;
+    height:0;
+    border-top:34px solid transparent;
+    border-bottom:34px solid transparent;
+    border-left:52px solid white;
+}
+
+/* video文字 */
+.video-text{
+    position:absolute;
+    bottom:40px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:42px;
+    font-weight:700;
+    letter-spacing:3px;
+    text-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+
+/* ================= 响应式设计 ================= */
+
+@media(max-width:1400px){
+    .logo{
+        font-size:54px;
+    }
+    .video-title{
+        font-size:40px;
+    }
+    .video-box{
+        width:78%;
+        height:60vh;
+    }
+}
+
+@media(max-width:1200px){
+    .video-title{
+        font-size:32px;
+    }
+    .video-box{
+        width:85%;
+        height:55vh;
+    }
+}
+
+@media(max-width:900px){
+    body{
+        overflow-y:auto;
+        height:auto;
+    }
+
+    .page{
+        padding:16px;
+        height:auto;
+        min-height:100vh;
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:16px;
+        position:relative;
+    }
+
+    .language-box{
+        position:absolute;
+        right:0;
+        top:0;
+        z-index:10;
+    }
+
+    .language-btn{
+        width:44px;
+        height:44px;
+        padding:0;
+        border-radius:50%;
+    }
+
+    .lang-text{
+        display:none;
+    }
+
+    .lang-icon{
+        font-size:22px;
+    }
+
+    .language-dropdown{
+        right:0;
+        left:auto;
+    }
+
+    .left-info{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+
+    .right-area{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+        width:100%;
+    }
+
+    .logo{
+        font-size:36px;
+    }
+
+    .desc{
+        font-size:16px;
+    }
+
+    .back-btn{
+        padding:12px 20px;
+        font-size:16px;
+    }
+
+    .language-btn{
+        width:160px;
+        height:52px;
+        font-size:18px;
+    }
+
+    .lang-icon{
+        font-size:22px;
+    }
+
+    .video-title{
+        font-size:28px;
+        white-space:normal;
+        text-align:left;
+    }
+
+    .video-section{
+        width:100%;
+        min-height:40vh;
+    }
+
+    .video-box{
+        width:100%;
+        height:40vh;
+        border-radius:20px;
+    }
+
+    .play-btn{
+        width:90px;
+        height:90px;
+    }
+
+    .play-icon{
+        border-top:24px solid transparent;
+        border-bottom:24px solid transparent;
+        border-left:38px solid white;
+        margin-left:8px;
+    }
+
+    .video-text{
+        font-size:24px;
+        bottom:24px;
+    }
+}
+
+@media(max-width:480px){
+    .logo{
+        font-size:28px;
+    }
+
+    .video-box{
+        height:35vh;
+    }
+
+    .video-text{
+        font-size:20px;
+    }
+}
