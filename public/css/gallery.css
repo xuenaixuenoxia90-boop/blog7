@@ -6,9 +6,8 @@ body{
     overflow-y:auto;
 }
 
-/* ================= 通用容器 ================= */
-
-.container{
+/* 页面 */
+.page{
     width:100%;
     min-height:100vh;
     display:flex;
@@ -16,26 +15,39 @@ body{
     padding:24px 0;
 }
 
-.side-space{
+/* 左右广告位 */
+.ad-left,
+.ad-right{
     width:120px;
     min-height:92vh;
+    border-radius:28px;
 }
 
+/* 中间内容 */
 .main{
     width:1320px;
     margin:0 34px;
 }
 
-/* ================= 顶部区域 ================= */
+/* 顶部 */
+.header{
+    margin-bottom:24px;
+}
 
-.top-bar{
+.top-row{
     display:flex;
     justify-content:space-between;
     align-items:flex-start;
-    margin-bottom:24px;
-    position:relative;
 }
 
+/* 左侧区域 */
+.left-wrap{
+    display:flex;
+    align-items:flex-start;
+    gap:22px;
+}
+
+/* 返回按钮 */
 .back-btn{
     width:108px;
     height:50px;
@@ -47,12 +59,6 @@ body{
     font-weight:700;
     cursor:pointer;
     transition:.25s;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-right:22px;
-    flex-shrink:0;
 }
 
 .back-btn:hover{
@@ -60,109 +66,33 @@ body{
     background:#f8f9ff;
 }
 
-.arrow{
-    font-size:22px;
-}
-
-.header{
+/* LOGO区域 */
+.logo-wrap{
     display:flex;
     flex-direction:column;
 }
 
-.header h1{
+.logo{
     font-size:64px;
     font-weight:900;
     color:#171717;
     line-height:1;
     letter-spacing:2px;
-    margin:0;
 }
 
-.header p{
+.desc{
     margin-top:10px;
     font-size:22px;
     color:#666;
 }
 
-/* ================= 语言切换 ================= */
-
-.language-box{
-    position:absolute;
-    right:0;
-    top:0;
-    z-index:10;
-}
-
-.language-btn{
-    width:54px;
-    height:54px;
-    border:none;
-    border-radius:50%;
-    background:white;
-    box-shadow:0 8px 20px rgba(0,0,0,.06);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    cursor:pointer;
-    transition:.25s;
-}
-
-.language-btn:hover{
-    transform:translateY(-2px);
-    background:#f8f9ff;
-}
-
-.lang-icon{
-    font-size:26px;
-}
-
-.lang-text{
-    font-size:13px;
-    font-weight:500;
-    color:#333;
-}
-
-.language-dropdown{
-    position:absolute;
-    top:64px;
-    right:0;
-    background:white;
-    border-radius:14px;
-    padding:10px;
-    display:none;
-    flex-direction:column;
-    gap:6px;
-    box-shadow:0 8px 25px rgba(0,0,0,.1);
-    z-index:100;
-}
-
-.language-box:hover .language-dropdown{
-    display:flex;
-}
-
-.language-item{
-    border:none;
-    background:none;
-    padding:8px 16px;
-    font-size:14px;
-    color:#333;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.language-item:hover{
-    background:#eef1f7;
-}
-
-/* ================= 瀑布流 ================= */
-
+/* 瀑布流 */
 .gallery{
     column-count:3;
     column-gap:24px;
 }
 
+/* 卡片 */
 .card{
     width:100%;
     margin-bottom:24px;
@@ -184,8 +114,7 @@ body{
     display:block;
 }
 
-/* ================= 加载文字 ================= */
-
+/* 加载文字 */
 .loading{
     width:100%;
     text-align:center;
@@ -200,10 +129,10 @@ body{
     .main{
         width:1180px;
     }
-    .header h1{
+    .logo{
         font-size:56px;
     }
-    .header p{
+    .desc{
         font-size:20px;
     }
 }
@@ -224,11 +153,12 @@ body{
         height:auto;
     }
 
-    .container{
+    .page{
         padding:16px;
     }
 
-    .side-space{
+    .ad-left,
+    .ad-right{
         display:none;
     }
 
@@ -237,35 +167,31 @@ body{
         margin:0;
     }
 
-    .top-bar{
+    .header{
         position:relative;
         padding-right:54px;
+    }
+
+    .top-row{
+        display:flex;
+        justify-content:flex-start;
+        align-items:flex-start;
+        gap:16px;
         margin-bottom:24px;
     }
 
-    .back-btn{
-        padding:12px 20px;
-        font-size:16px;
-        width:auto;
-        height:auto;
-        margin-right:16px;
-    }
-
-    .arrow{
-        font-size:18px;
-    }
-
-    .header h1{
-        font-size:36px;
-    }
-
-    .header p{
-        font-size:16px;
+    .language-box{
+        position:absolute;
+        right:0;
+        top:0;
+        z-index:10;
     }
 
     .language-btn{
         width:44px;
         height:44px;
+        padding:0;
+        border-radius:50%;
     }
 
     .lang-text{
@@ -281,6 +207,24 @@ body{
         left:auto;
     }
 
+    .left-wrap{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .logo{
+        font-size:36px;
+    }
+
+    .desc{
+        font-size:16px;
+    }
+
+    .back-btn{
+        padding:12px 20px;
+        font-size:16px;
+    }
+
     .gallery{
         column-count:2;
         column-gap:12px;
@@ -293,7 +237,7 @@ body{
 }
 
 @media(max-width:480px){
-    .header h1{
+    .logo{
         font-size:28px;
     }
 }
