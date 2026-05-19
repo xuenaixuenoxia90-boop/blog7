@@ -1,0 +1,299 @@
+/* ================= 赏图吧（图片页）专用样式 ================= */
+
+body{
+    background:#eef1f7;
+    font-family:"Microsoft YaHei",sans-serif;
+    overflow-y:auto;
+}
+
+/* ================= 通用容器 ================= */
+
+.container{
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:24px 0;
+}
+
+.side-space{
+    width:120px;
+    min-height:92vh;
+}
+
+.main{
+    width:1320px;
+    margin:0 34px;
+}
+
+/* ================= 顶部区域 ================= */
+
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:24px;
+    position:relative;
+}
+
+.back-btn{
+    width:108px;
+    height:50px;
+    border:none;
+    border-radius:18px;
+    background:white;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+    font-size:22px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    margin-right:22px;
+    flex-shrink:0;
+}
+
+.back-btn:hover{
+    transform:translateY(-2px);
+    background:#f8f9ff;
+}
+
+.arrow{
+    font-size:22px;
+}
+
+.header{
+    display:flex;
+    flex-direction:column;
+}
+
+.header h1{
+    font-size:64px;
+    font-weight:900;
+    color:#171717;
+    line-height:1;
+    letter-spacing:2px;
+    margin:0;
+}
+
+.header p{
+    margin-top:10px;
+    font-size:22px;
+    color:#666;
+}
+
+/* ================= 语言切换 ================= */
+
+.language-box{
+    position:absolute;
+    right:0;
+    top:0;
+    z-index:10;
+}
+
+.language-btn{
+    width:54px;
+    height:54px;
+    border:none;
+    border-radius:50%;
+    background:white;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.language-btn:hover{
+    transform:translateY(-2px);
+    background:#f8f9ff;
+}
+
+.lang-icon{
+    font-size:26px;
+}
+
+.lang-text{
+    font-size:13px;
+    font-weight:500;
+    color:#333;
+}
+
+.language-dropdown{
+    position:absolute;
+    top:64px;
+    right:0;
+    background:white;
+    border-radius:14px;
+    padding:10px;
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    box-shadow:0 8px 25px rgba(0,0,0,.1);
+    z-index:100;
+}
+
+.language-box:hover .language-dropdown{
+    display:flex;
+}
+
+.language-item{
+    border:none;
+    background:none;
+    padding:8px 16px;
+    font-size:14px;
+    color:#333;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.language-item:hover{
+    background:#eef1f7;
+}
+
+/* ================= 瀑布流 ================= */
+
+.gallery{
+    column-count:3;
+    column-gap:24px;
+}
+
+.card{
+    width:100%;
+    margin-bottom:24px;
+    break-inside:avoid;
+    border-radius:28px;
+    overflow:hidden;
+    background:white;
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+    cursor:pointer;
+    transition:.25s;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+}
+
+.card img{
+    width:100%;
+    display:block;
+}
+
+/* ================= 加载文字 ================= */
+
+.loading{
+    width:100%;
+    text-align:center;
+    padding:28px 0 10px;
+    color:#7b8190;
+    font-size:18px;
+}
+
+/* ================= 响应式设计 ================= */
+
+@media(max-width:1600px){
+    .main{
+        width:1180px;
+    }
+    .header h1{
+        font-size:56px;
+    }
+    .header p{
+        font-size:20px;
+    }
+}
+
+@media(max-width:1200px){
+    .main{
+        width:900px;
+    }
+    .gallery{
+        column-count:2;
+        column-gap:20px;
+    }
+}
+
+@media(max-width:900px){
+    body{
+        overflow-y:auto;
+        height:auto;
+    }
+
+    .container{
+        padding:16px;
+    }
+
+    .side-space{
+        display:none;
+    }
+
+    .main{
+        width:100%;
+        margin:0;
+    }
+
+    .top-bar{
+        position:relative;
+        padding-right:54px;
+        margin-bottom:24px;
+    }
+
+    .back-btn{
+        padding:12px 20px;
+        font-size:16px;
+        width:auto;
+        height:auto;
+        margin-right:16px;
+    }
+
+    .arrow{
+        font-size:18px;
+    }
+
+    .header h1{
+        font-size:36px;
+    }
+
+    .header p{
+        font-size:16px;
+    }
+
+    .language-btn{
+        width:44px;
+        height:44px;
+    }
+
+    .lang-text{
+        display:none;
+    }
+
+    .lang-icon{
+        font-size:22px;
+    }
+
+    .language-dropdown{
+        right:0;
+        left:auto;
+    }
+
+    .gallery{
+        column-count:2;
+        column-gap:12px;
+    }
+
+    .card{
+        margin-bottom:12px;
+        border-radius:16px;
+    }
+}
+
+@media(max-width:480px){
+    .header h1{
+        font-size:28px;
+    }
+}

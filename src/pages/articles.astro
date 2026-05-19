@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+---
+
+<BaseLayout title="挖洞吧" css={['articles.css']}>
+<div class="container" id="mainContainer">
+    <!-- 左边广告预留 -->
+    <div class="side-space"></div>
+    <!-- 主体 -->
+    <div class="main">
+        <!-- 顶部 -->
+        <div class="top-bar">
+            <div class="top-left">
+                <button class="back-btn" onclick="goBackToHome()">
+                    <span class="arrow">←</span>
+                    <span data-cn="返回" data-en="Back">返回</span>
+                </button>
+                <div class="header">
+                    <h1 data-cn="挖洞吧" data-en="Hack Zone">挖洞吧</h1>
+                    <p data-cn="自己挖 + 市面上大部分漏洞报告，只要小白一直Go就一直更新！" data-en="Self-discovered vulnerabilities + most public reports. As long as GOGO keeps going, updates never stop!">
+                        自己挖 + 市面上大部分漏洞报告，只要小白一直Go就一直更新！
+                    </p>
+                </div>
+            </div>
+            <div class="language-box">
+                <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
+                <div class="language-dropdown">
+                    <button class="language-item" onclick="switchLanguage('zh')">简体中文</button>
+                    <button class="language-item" onclick="switchLanguage('en')">English</button>
+                </div>
+            </div>
+        </div>
+        <!-- 搜索 -->
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="搜索漏洞标题..." />
+            <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search">🔍 搜索</button>
+        </div>
+        <!-- 文章列表 -->
+        <div class="article-grid">
+            {posts.map((post) => {
+              const title = post.data.title || post.slug;
+              const cover = post.data.cover || '';
+              return (
+                <div class="card" onclick={`navigateTo('/article/${post.slug}')`}>
+                  <img src={cover || `https://picsum.photos/300/200?${post.slug}`} alt={title} />
+                  <h3>{title}</h3>
+                </div>
+              );
+            })}
+        </div>
+        <!-- 分页 -->
+        <div class="pagination">
+            <button class="page">&lt;</button>
+            <button class="page active">1</button>
+            <button class="page">2</button>
+            <button class="page">3</button>
+            <button class="page">&gt;</button>
+        </div>
+    </div>
+    <div class="side-space"></div>
+</div>
+</BaseLayout>

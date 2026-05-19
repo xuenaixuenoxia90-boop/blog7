@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string;
+  css?: string[];
+}
+
+const { title, css = [] } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <link rel="stylesheet" href="/css/common.css">
+  {css.map((c) => <link rel="stylesheet" href={`/css/${c}`}>)}
+</head>
+<body>
+  <slot />
+  <script is:inline src="/js/common.js"></script>
+</body>
+</html>

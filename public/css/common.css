@@ -1,0 +1,104 @@
+/* ================= 公共样式 ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Microsoft YaHei",sans-serif;
+    color:#111;
+}
+
+/* ================= 语言切换（所有页面通用） ================= */
+
+.language-box{
+    position:relative;
+}
+
+.language-btn{
+    width:220px;
+    height:86px;
+    border:none;
+    border-radius:32px;
+    background:white;
+    font-size:26px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    transition:.25s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+}
+
+.lang-icon{
+    font-size:32px;
+}
+
+.language-btn:hover{
+    transform:translateY(-2px);
+}
+
+.language-dropdown{
+    position:absolute;
+    top:100px;
+    left:0;
+    width:220px;
+    background:white;
+    border-radius:26px;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.12);
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-10px);
+    transition:.25s;
+    z-index:999;
+}
+
+.language-box:hover .language-dropdown{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+}
+
+.language-item{
+    width:100%;
+    padding:22px;
+    font-size:24px;
+    font-weight:700;
+    border:none;
+    background:white;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.language-item:hover{
+    background:#f3f5fb;
+}
+
+/* ================= 语言切换 - 移动端适配 ================= */
+
+@media screen and (max-width: 900px) {
+    .language-btn{
+        width:160px;
+        height:56px;
+        font-size:20px;
+    }
+
+    .lang-icon{
+        font-size:24px;
+    }
+
+    .language-dropdown{
+        top:68px;
+        width:160px;
+    }
+
+    .language-item{
+        padding:16px;
+        font-size:18px;
+    }
+}
