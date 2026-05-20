@@ -185,42 +185,39 @@ body::before{
 /* 视频外框 */
 .video-box{
     width:72%;
-    max-width:1200px;
+    height:66vh;
     border-radius:34px;
-    overflow:visible;
-    position:relative;
-    background:rgba(0,0,0,.35);
-    box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.08);
-    padding:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-/* 视频容器 16:9 比例 */
-.video-container{
-    width:100%;
-    aspect-ratio:16/9;
-    border-radius:26px;
     overflow:hidden;
     position:relative;
-    background:#000;
+    background:linear-gradient(rgba(0,0,0,.28),rgba(0,0,0,.45)),url("https://picsum.photos/1400/800") center/cover no-repeat;
+    box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.08);
     display:flex;
     align-items:center;
     justify-content:center;
 }
 
-/* 视频 iframe */
-.video-iframe{
+/* 视频容器 */
+.video-container{
     width:100%;
     height:100%;
-    border:none;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* 视频播放器 */
+.video-player{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#000;
 }
 
 /* 播放按钮 */
 .play-btn{
-    width:100px;
-    height:100px;
+    width:140px;
+    height:140px;
     border-radius:50%;
     background:rgba(255,255,255,.14);
     backdrop-filter:blur(12px);
@@ -239,21 +236,21 @@ body::before{
 
 /* 三角 */
 .play-icon{
-    margin-left:6px;
+    margin-left:10px;
     width:0;
     height:0;
-    border-top:28px solid transparent;
-    border-bottom:28px solid transparent;
-    border-left:44px solid white;
+    border-top:34px solid transparent;
+    border-bottom:34px solid transparent;
+    border-left:52px solid white;
 }
 
 /* video文字 */
 .video-text{
     position:absolute;
-    bottom:30px;
+    bottom:40px;
     left:50%;
     transform:translateX(-50%);
-    font-size:36px;
+    font-size:42px;
     font-weight:700;
     letter-spacing:3px;
     text-shadow:0 4px 20px rgba(0,0,0,.4);
@@ -262,23 +259,25 @@ body::before{
 /* ================= 响应式设计 ================= */
 
 @media(max-width:1400px){
-    .video-box{
-        width:82%;
-    }
     .logo{
         font-size:54px;
     }
     .video-title{
         font-size:40px;
     }
+    .video-box{
+        width:78%;
+        height:60vh;
+    }
 }
 
 @media(max-width:1200px){
-    .video-box{
-        width:90%;
-    }
     .video-title{
         font-size:32px;
+    }
+    .video-box{
+        width:85%;
+        height:55vh;
     }
 }
 
@@ -379,29 +378,25 @@ body::before{
 
     .video-box{
         width:100%;
-        padding:8px;
+        height:40vh;
         border-radius:20px;
     }
 
-    .video-container{
-        border-radius:16px;
-    }
-
     .play-btn{
-        width:70px;
-        height:70px;
+        width:90px;
+        height:90px;
     }
 
     .play-icon{
-        border-top:20px solid transparent;
-        border-bottom:20px solid transparent;
-        border-left:32px solid white;
-        margin-left:4px;
+        border-top:24px solid transparent;
+        border-bottom:24px solid transparent;
+        border-left:38px solid white;
+        margin-left:8px;
     }
 
     .video-text{
-        font-size:20px;
-        bottom:16px;
+        font-size:24px;
+        bottom:24px;
     }
 }
 
@@ -410,7 +405,11 @@ body::before{
         font-size:28px;
     }
 
+    .video-box{
+        height:35vh;
+    }
+
     .video-text{
-        font-size:16px;
+        font-size:20px;
     }
 }
