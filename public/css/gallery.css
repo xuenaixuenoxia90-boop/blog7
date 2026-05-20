@@ -154,6 +154,7 @@ body{
     }
 
     .page{
+        display:block;
         padding:16px;
     }
 
