@@ -1,5 +1,6 @@
 ---
 title: XXX平台存在越权造成任意用户解绑手机号
+slug: xxx-platform-privilege-escalation
 date: 2026-05-17
 cover: "https://pkq1.qzz.io/file/1779203112196_gallery.png"
 description: 在对XXX平台进行安全测试中，发现其更改手机号功能存在验证码爆破，会覆盖别的用户手机号，进而使受害者无法登录账号
