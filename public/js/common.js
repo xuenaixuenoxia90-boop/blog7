@@ -126,7 +126,7 @@ function initSearch(){
             allData.push({
                 element: card,
                 title: titleEl.textContent,
-                slug: card.getAttribute("onclick") ? card.getAttribute("onclick").match(/'([^']+)'/)[1] : ""
+                slug: card.dataset.slug || ""
             });
         }
     });
