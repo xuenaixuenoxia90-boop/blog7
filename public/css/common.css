@@ -102,3 +102,46 @@ body{
         font-size:18px;
     }
 }
+
+/* ================= 搜索无结果提示 ================= */
+
+.no-result{
+    grid-column:1/-1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:60px 0;
+}
+
+.no-result-content{
+    text-align:center;
+    color:#888;
+}
+
+.no-result-content img{
+    width:280px;
+    max-width:80%;
+    border-radius:16px;
+    margin-bottom:20px;
+    opacity:0.7;
+}
+
+.no-result-content p{
+    font-size:20px;
+    font-weight:500;
+    color:#999;
+}
+
+@media screen and (max-width: 900px) {
+    .no-result{
+        padding:40px 0;
+    }
+    
+    .no-result-content img{
+        width:200px;
+    }
+    
+    .no-result-content p{
+        font-size:16px;
+    }
+}
