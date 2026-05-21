@@ -110,33 +110,102 @@ function scrollToBottom(){
     });
 }
 
-/* 搜索功能（通用） */
+/* 搜索功能（增强版 - 支持正则） */
 function initSearch(){
     var searchInput = document.getElementById("searchInput");
     var searchBtn = document.querySelector(".search-btn");
-    if(searchInput && searchBtn){
-        searchBtn.addEventListener("click",function(){
-            var keyword = searchInput.value.trim();
-            var cards = document.querySelectorAll(".card");
-            cards.forEach(function(card){
-                var title = card.querySelector("h3, .card-content h3, .video-title, .tool-name");
-                if(title){
-                    var text = title.textContent.toLowerCase();
-                    if(keyword === "" || text.indexOf(keyword.toLowerCase()) !== -1){
-                        card.style.display = "";
-                    }else{
-                        card.style.display = "none";
-                    }
-                }
-            });
-        });
+    if(!searchInput || !searchBtn) return;
 
-        searchInput.addEventListener("keydown",function(e){
-            if(e.key === "Enter"){
-                searchBtn.click();
+    /* 获取所有卡片数据 */
+    var cards = document.querySelectorAll(".card, .video-card");
+    var allData = [];
+    
+    cards.forEach(function(card){
+        var titleEl = card.querySelector("h3, .card-content h3, .video-title, .tool-name");
+        if(titleEl){
+            allData.push({
+                element: card,
+                title: titleEl.textContent,
+                slug: card.getAttribute("onclick") ? card.getAttribute("onclick").match(/'([^']+)'/)[1] : ""
+            });
+        }
+    });
+
+    /* 搜索函数 */
+    function performSearch(){
+        var keyword = searchInput.value.trim();
+        var foundCount = 0;
+
+        if(keyword === ""){
+            /* 清空搜索，显示所有 */
+            cards.forEach(function(card){
+                card.style.display = "";
+            });
+            removeNoResult();
+            return;
+        }
+
+        /* 使用正则表达式匹配 */
+        try{
+            var regex = new RegExp(keyword, "i"); /* 忽略大小写 */
+        }catch(e){
+            /* 如果正则不合法，使用普通匹配 */
+            regex = new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+        }
+
+        cards.forEach(function(card){
+            var titleEl = card.querySelector("h3, .card-content h3, .video-title, .tool-name");
+            if(titleEl){
+                var text = titleEl.textContent;
+                if(regex.test(text)){
+                    card.style.display = "";
+                    foundCount++;
+                }else{
+                    card.style.display = "none";
+                }
             }
         });
+
+        /* 处理无结果情况 */
+        if(foundCount === 0){
+            showNoResult();
+        }else{
+            removeNoResult();
+        }
     }
+
+    /* 显示无结果提示 */
+    function showNoResult(){
+        removeNoResult();
+        var grid = document.querySelector(".article-grid, .tool-grid, .video-grid");
+        if(grid){
+            var noResultDiv = document.createElement("div");
+            noResultDiv.className = "no-result";
+            noResultDiv.innerHTML = '<div class="no-result-content">' +
+                '<img src="https://picsum.photos/300/200?search-empty" alt="没有找到">' +
+                '<p>没有找到对应的文件~(´・ω・`)</p>' +
+                '</div>';
+            grid.appendChild(noResultDiv);
+        }
+    }
+
+    /* 移除无结果提示 */
+    function removeNoResult(){
+        var existing = document.querySelector(".no-result");
+        if(existing) existing.remove();
+    }
+
+    /* 绑定事件 */
+    searchBtn.addEventListener("click", performSearch);
+
+    searchInput.addEventListener("keydown",function(e){
+        if(e.key === "Enter"){
+            performSearch();
+        }
+    });
+
+    /* 输入时实时搜索 */
+    searchInput.addEventListener("input", performSearch);
 }
 
 /* 分页功能 */
