@@ -1,13 +1,19 @@
 /* ================= 公共 JavaScript ================= */
 
-/* 开场动画 - 只有直接访问时显示 */
+/* 检测是否为主页 */
+function isHomePage(){
+    return document.getElementById("intro") !== null || document.getElementById("mainPage") !== null;
+}
+
+/* 开场动画 - 只有主页显示 */
 function initIntroAnimation(){
+    if(!isHomePage()) return;
+    
     const isReturning = sessionStorage.getItem('isReturningFromOtherPage');
     const intro = document.getElementById("intro");
     const mainPage = document.getElementById("mainPage");
     
     if(isReturning){
-        /* 返回主页：完全隐藏动画元素，直接显示主页面 */
         if(intro) intro.style.display = "none";
         if(mainPage){
             mainPage.style.display = "";
@@ -16,7 +22,6 @@ function initIntroAnimation(){
         }
         sessionStorage.removeItem('isReturningFromOtherPage');
     }else{
-        /* 直接访问：显示动画 */
         if(intro) intro.classList.add("active");
     }
 }
@@ -24,9 +29,7 @@ function initIntroAnimation(){
 document.addEventListener("DOMContentLoaded",function(){
     initIntroAnimation();
 
-    /* 开场动画头像移动 */
-    const isReturning = sessionStorage.getItem('isReturningFromOtherPage');
-    if(!isReturning){
+    if(isHomePage()){
         window.addEventListener("load",function(){
             const big = document.querySelector(".avatar-big");
             const target = document.getElementById("targetAvatar");
@@ -63,13 +66,11 @@ function switchLanguage(lang){
         }
     });
 
-    /* 更新语言按钮文字 */
     var langText = document.querySelector(".lang-text");
     if(langText){
         langText.textContent = lang === "en" ? "English" : "简体中文";
     }
 
-    /* 更新搜索框占位符 */
     var searchInput = document.getElementById("searchInput");
     if(searchInput){
         searchInput.placeholder = lang === "en" ? "Search..." : "搜索...";
@@ -130,7 +131,6 @@ function initSearch(){
             });
         });
 
-        /* 回车搜索 */
         searchInput.addEventListener("keydown",function(e){
             if(e.key === "Enter"){
                 searchBtn.click();
