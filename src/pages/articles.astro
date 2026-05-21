@@ -36,15 +36,16 @@ const posts = await getCollection('blog');
         <!-- 搜索 -->
         <div class="toolbar">
             <input type="text" id="searchInput" placeholder="搜索漏洞标题..." />
-            <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search">🔍 搜索</button>
+            <button class="search-btn" data-cn="🔍 搜索" data-en=" Search">🔍 搜索</button>
         </div>
         <!-- 文章列表 -->
         <div class="article-grid">
             {posts.map((post) => {
               const title = post.data.title || post.slug;
               const cover = post.data.cover || '';
+              const encodedSlug = encodeURI(post.slug);
               return (
-                <div class="card" data-slug={post.slug} onclick="navigateTo('/article/' + this.dataset.slug)">
+                <div class="card" data-slug={encodedSlug} onclick="navigateTo('/article/' + this.dataset.slug)">
                   <img src={cover || `https://picsum.photos/300/200?${post.slug}`} alt={title} />
                   <h3>{title}</h3>
                 </div>
