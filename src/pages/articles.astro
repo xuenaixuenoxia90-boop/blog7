@@ -44,7 +44,7 @@ const posts = await getCollection('blog');
               const title = post.data.title || post.slug;
               const cover = post.data.cover || '';
               return (
-                <div class="card" onclick={`navigateTo('/article/${post.slug}')`}>
+                <div class="card" data-slug={post.slug} onclick="navigateTo('/article/' + this.dataset.slug)">
                   <img src={cover || `https://picsum.photos/300/200?${post.slug}`} alt={title} />
                   <h3>{title}</h3>
                 </div>
