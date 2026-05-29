@@ -57,4 +57,30 @@ const posts = await getCollection('blog');
     </div>
     <div class="side-space"></div>
 </div>
+
+<!-- 警告框 -->
+<div class="warning-overlay" id="warningOverlay">
+    <div class="warning-box">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-title">警告</div>
+        <div class="warning-text">公开漏洞报告分享平台收录的所有漏洞均已修复，仅用于网络安全学习，严禁用于任何非法用途！</div>
+        <button class="warning-btn" onclick="closeWarning()">我已知晓</button>
+    </div>
+</div>
+
+<script is:inline>
+document.addEventListener("DOMContentLoaded", function() {
+    var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
+    var isReturning = sessionStorage.getItem('isReturningFromOtherPage');
+    
+    if (!hasSeenWarning && !isReturning) {
+        document.getElementById('warningOverlay').classList.add('active');
+        sessionStorage.setItem('hasSeenArticlesWarning', 'true');
+    }
+});
+
+function closeWarning() {
+    document.getElementById('warningOverlay').classList.remove('active');
+}
+</script>
 </BaseLayout>
