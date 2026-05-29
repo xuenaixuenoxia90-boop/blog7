@@ -142,9 +142,28 @@ body{
     flex:1;
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    grid-template-rows:repeat(3,1fr);
     gap:16px;
-    min-height:0;
+    overflow-y:auto;
+    padding-right:8px;
+}
+
+/* 滚动条样式 */
+.article-grid::-webkit-scrollbar{
+    width:6px;
+}
+
+.article-grid::-webkit-scrollbar-track{
+    background:rgba(0,0,0,.05);
+    border-radius:3px;
+}
+
+.article-grid::-webkit-scrollbar-thumb{
+    background:rgba(0,0,0,.15);
+    border-radius:3px;
+}
+
+.article-grid::-webkit-scrollbar-thumb:hover{
+    background:rgba(0,0,0,.25);
 }
 
 .card{
@@ -320,7 +339,7 @@ body{
     .article-grid{
         grid-template-columns:repeat(2,1fr);
         gap:14px;
-        flex:1;
+        overflow-y:auto;
     }
 
     .card{
@@ -345,7 +364,7 @@ body{
     }
 
     .card:nth-child(n+7){
-        display:none;
+        display:flex;
     }
 
     .pagination{
