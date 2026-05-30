@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 const posts = await getCollection('blog');
 const postsPerPage = 9;
 const totalPages = Math.ceil(posts.length / postsPerPage);
+const firstPagePosts = posts.slice(0, postsPerPage);
 ---
 
 <BaseLayout title="挖洞吧" css={['articles.css']}>
@@ -34,10 +35,10 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
         </div>
         <div class="toolbar">
             <input type="text" id="searchInput" placeholder="搜索漏洞标题..." />
-            <button class="search-btn" data-cn="🔍 搜索" data-en=" Search">🔍 搜索</button>
+            <button class="search-btn" data-cn="🔍 搜索" data-en=" Search"> 搜索</button>
         </div>
         <div class="article-grid" id="articleGrid">
-            {posts.map((post) => {
+            {firstPagePosts.map((post) => {
               const title = post.data.title || post.slug;
               const cover = post.data.cover || '';
               const urlSlug = post.data.slug || post.slug;
@@ -50,11 +51,11 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
             })}
         </div>
         <div class="pagination" id="pagination">
-            <button class="page prev-btn">&lt;</button>
+            <button class="page prev-btn" id="prevBtn">&lt;</button>
             {Array.from({ length: totalPages }, (_, i) => (
               <button class={`page ${i === 0 ? 'active' : ''}`} data-page={i + 1}>{i + 1}</button>
             ))}
-            <button class="page next-btn">&gt;</button>
+            <button class="page next-btn" id="nextBtn">&gt;</button>
         </div>
     </div>
     <div class="side-space"></div>
@@ -73,6 +74,18 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
     </div>
 </div>
 
+<!-- 存储所有文章数据供分页使用 -->
+<script is:inline>
+var allPostsData = [];
+{posts.map((post) => (
+  allPostsData.push({
+    title: post.data.title || post.slug,
+    cover: post.data.cover || '',
+    urlSlug: post.data.slug || post.slug
+  });
+))}
+</script>
+
 <script is:inline>
 document.addEventListener("DOMContentLoaded", function() {
     var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
@@ -84,21 +97,36 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     // 分页功能
-    var cards = document.querySelectorAll('.card');
+    var grid = document.getElementById('articleGrid');
     var pageButtons = document.querySelectorAll('.page[data-page]');
-    var prevBtn = document.querySelector('.prev-btn');
-    var nextBtn = document.querySelector('.next-btn');
+    var prevBtn = document.getElementById('prevBtn');
+    var nextBtn = document.getElementById('nextBtn');
     var currentPage = 1;
     var postsPerPage = 9;
-    var totalPages = Math.ceil(cards.length / postsPerPage);
     
-    // 显示指定页的卡片
-    function showPage(page) {
+    // 渲染指定页的卡片
+    function renderPage(page) {
         var start = (page - 1) * postsPerPage;
         var end = start + postsPerPage;
+        var pagePosts = allPostsData.slice(start, end);
         
-        cards.forEach(function(card, index) {
-            card.style.display = (index >= start && index < end) ? 'flex' : 'none';
+        grid.innerHTML = '';
+        pagePosts.forEach(function(post) {
+            var card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.slug = post.urlSlug;
+            card.onclick = function() { navigateTo('/article/' + post.urlSlug); };
+            
+            var img = document.createElement('img');
+            img.src = post.cover || ('https://picsum.photos/300/200?' + post.urlSlug);
+            img.alt = post.title;
+            
+            var h3 = document.createElement('h3');
+            h3.textContent = post.title;
+            
+            card.appendChild(img);
+            card.appendChild(h3);
+            grid.appendChild(card);
         });
         
         // 更新按钮状态
@@ -110,27 +138,24 @@ document.addEventListener("DOMContentLoaded", function() {
         currentPage = page;
     }
     
-    // 初始显示第一页
-    showPage(1);
-    
     // 页码按钮点击
     pageButtons.forEach(function(btn) {
         btn.addEventListener('click', function() {
-            showPage(parseInt(this.dataset.page));
+            renderPage(parseInt(this.dataset.page));
         });
     });
     
     // 上一页
     prevBtn.addEventListener('click', function() {
         if (currentPage > 1) {
-            showPage(currentPage - 1);
+            renderPage(currentPage - 1);
         }
     });
     
     // 下一页
     nextBtn.addEventListener('click', function() {
-        if (currentPage < totalPages) {
-            showPage(currentPage + 1);
+        if (currentPage < pageButtons.length) {
+            renderPage(currentPage + 1);
         }
     });
 });
