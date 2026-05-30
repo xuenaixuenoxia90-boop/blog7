@@ -142,9 +142,10 @@ body{
     flex:1;
     display:grid;
     grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(3,1fr);
     gap:16px;
-    overflow-y:auto;
-    padding-right:8px;
+    overflow:hidden;
+    min-height:0;
 }
 
 /* 滚动条样式 */
@@ -402,13 +403,14 @@ body{
 }
 
 .warning-box{
-    background:white;
+    background:linear-gradient(180deg,#fff5f5,#ffe8e8);
+    border:2px solid #e74c3c;
     border-radius:24px;
     padding:40px;
     max-width:500px;
     width:90%;
     text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,.3);
+    box-shadow:0 20px 60px rgba(231,76,60,.3);
     transform:scale(.9);
     transition:.3s ease;
 }
@@ -425,32 +427,53 @@ body{
 .warning-title{
     font-size:28px;
     font-weight:900;
-    color:#222;
+    color:#e74c3c;
     margin-bottom:16px;
 }
 
 .warning-text{
     font-size:16px;
     line-height:1.8;
-    color:#555;
+    color:#c0392b;
     margin-bottom:28px;
+}
+
+.warning-btns{
+    display:flex;
+    gap:16px;
+    justify-content:center;
 }
 
 .warning-btn{
     height:52px;
-    padding:0 36px;
+    padding:0 28px;
     border:none;
     border-radius:16px;
-    background:linear-gradient(135deg,#2f54eb,#1d39c4);
-    color:white;
     font-size:16px;
     font-weight:700;
     cursor:pointer;
     transition:.25s;
 }
 
-.warning-btn:hover{
+.confirm-btn{
+    background:linear-gradient(135deg,#e74c3c,#c0392b);
+    color:white;
+}
+
+.confirm-btn:hover{
     transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(47,84,235,.3);
+    box-shadow:0 8px 20px rgba(231,76,60,.35);
+}
+
+.back-btn{
+    background:white;
+    color:#e74c3c;
+    border:2px solid #e74c3c;
+}
+
+.back-btn:hover{
+    background:#e74c3c;
+    color:white;
+    transform:translateY(-2px);
 }
 
