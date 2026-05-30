@@ -3,6 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const posts = await getCollection('blog');
+const postsPerPage = 9;
+const totalPages = Math.ceil(posts.length / postsPerPage);
 ---
 
 <BaseLayout title="挖洞吧" css={['articles.css']}>
@@ -34,7 +36,7 @@ const posts = await getCollection('blog');
             <input type="text" id="searchInput" placeholder="搜索漏洞标题..." />
             <button class="search-btn" data-cn="🔍 搜索" data-en=" Search">🔍 搜索</button>
         </div>
-        <div class="article-grid">
+        <div class="article-grid" id="articleGrid">
             {posts.map((post) => {
               const title = post.data.title || post.slug;
               const cover = post.data.cover || '';
@@ -47,12 +49,12 @@ const posts = await getCollection('blog');
               );
             })}
         </div>
-        <div class="pagination">
-            <button class="page">&lt;</button>
-            <button class="page active">1</button>
-            <button class="page">2</button>
-            <button class="page">3</button>
-            <button class="page">&gt;</button>
+        <div class="pagination" id="pagination">
+            <button class="page prev-btn">&lt;</button>
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button class={`page ${i === 0 ? 'active' : ''}`} data-page={i + 1}>{i + 1}</button>
+            ))}
+            <button class="page next-btn">&gt;</button>
         </div>
     </div>
     <div class="side-space"></div>
@@ -64,7 +66,10 @@ const posts = await getCollection('blog');
         <div class="warning-icon">⚠️</div>
         <div class="warning-title">警告</div>
         <div class="warning-text">公开漏洞报告分享平台收录的所有漏洞均已修复，仅用于网络安全学习，严禁用于任何非法用途！</div>
-        <button class="warning-btn" onclick="closeWarning()">我已知晓</button>
+        <div class="warning-btns">
+            <button class="warning-btn confirm-btn" onclick="closeWarning()">我已知悉，确认进入</button>
+            <button class="warning-btn back-btn" onclick="backToHome()">返回</button>
+        </div>
     </div>
 </div>
 
@@ -77,10 +82,66 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('warningOverlay').classList.add('active');
         sessionStorage.setItem('hasSeenArticlesWarning', 'true');
     }
+    
+    // 分页功能
+    var cards = document.querySelectorAll('.card');
+    var pageButtons = document.querySelectorAll('.page[data-page]');
+    var prevBtn = document.querySelector('.prev-btn');
+    var nextBtn = document.querySelector('.next-btn');
+    var currentPage = 1;
+    var postsPerPage = 9;
+    var totalPages = Math.ceil(cards.length / postsPerPage);
+    
+    // 显示指定页的卡片
+    function showPage(page) {
+        var start = (page - 1) * postsPerPage;
+        var end = start + postsPerPage;
+        
+        cards.forEach(function(card, index) {
+            card.style.display = (index >= start && index < end) ? 'flex' : 'none';
+        });
+        
+        // 更新按钮状态
+        pageButtons.forEach(function(btn) {
+            btn.classList.remove('active');
+        });
+        pageButtons[page - 1].classList.add('active');
+        
+        currentPage = page;
+    }
+    
+    // 初始显示第一页
+    showPage(1);
+    
+    // 页码按钮点击
+    pageButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            showPage(parseInt(this.dataset.page));
+        });
+    });
+    
+    // 上一页
+    prevBtn.addEventListener('click', function() {
+        if (currentPage > 1) {
+            showPage(currentPage - 1);
+        }
+    });
+    
+    // 下一页
+    nextBtn.addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            showPage(currentPage + 1);
+        }
+    });
 });
 
 function closeWarning() {
     document.getElementById('warningOverlay').classList.remove('active');
+}
+
+function backToHome() {
+    sessionStorage.removeItem('isReturningFromOtherPage');
+    window.location.href = '/';
 }
 </script>
 </BaseLayout>
