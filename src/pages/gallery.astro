@@ -17,13 +17,9 @@ while ((match = imageRegex.exec(picturesContent)) !== null) {
 
 // 每批加载的图片数量
 const batchSize = 80;
-const totalPages = Math.ceil(allImages.length / batchSize);
 
 // 首屏渲染的图片
 const firstBatch = allImages.slice(0, batchSize);
-
-// 是否还有更多图片
-const hasMore = allImages.length > batchSize;
 ---
 
 <BaseLayout title="赏图吧" css={['gallery.css']}>
@@ -65,58 +61,71 @@ const hasMore = allImages.length > batchSize;
               </div>
             ))}
         </div>
-        <!-- 加载更多按钮 -->
+        <!-- 加载更多按钮区域 -->
         <div class="load-more-area" id="loadMoreArea">
-            {hasMore && (
-              <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreImages()">
-                  更多
-              </button>
-            )}
+            <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreImages()">
+                更多
+            </button>
         </div>
     </div>
     <!-- 右广告 -->
     <div class="ad-right"></div>
 </div>
 
-<!-- 传递总页数和总图片数到前端 -->
-<script id="gallery-config" type="application/json">{"totalPages": {totalPages}, "total": {allImages.length}, "batchSize": {batchSize}}</script>
+<!-- 传递所有图片URL到前端 -->
+<script id="all-gallery-images" type="application/json">{JSON.stringify(allImages)}</script>
 
 <script>
-var currentPage = 1;
-var totalPages = 1;
-var totalImages = 0;
-var batchSize = 80;
-var isLoading = false;
-var allLoaded = false;
-
-// 读取配置数据
+// 从脚本标签读取所有图片URL
+var allImages = [];
 try {
-    var configScript = document.getElementById('gallery-config');
-    if (configScript) {
-        var config = JSON.parse(configScript.textContent);
-        totalPages = config.totalPages;
-        totalImages = config.total;
-        batchSize = config.batchSize;
+    var scriptEl = document.getElementById('all-gallery-images');
+    if (scriptEl) {
+        allImages = JSON.parse(scriptEl.textContent);
     }
 } catch(e) {
-    console.error('Failed to load gallery config:', e);
+    console.error('Failed to load images:', e);
 }
 
-// 检查是否全部加载完毕
-if (totalPages <= 1) {
-    allLoaded = true;
-    var area = document.getElementById('loadMoreArea');
-    if (area) {
-        area.innerHTML = '<div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>';
-    }
-}
-
+var batchSize = 80;
+var loadedCount = allImages.length > batchSize ? batchSize : allImages.length;
+var isLoading = false;
+var loadMoreArea = document.getElementById('loadMoreArea');
+var loadMoreBtn = document.getElementById('loadMoreBtn');
 var galleryContainer = document.getElementById('galleryContainer');
 
-// 渲染图片到网格
-function renderImages(images) {
+// 如果图片总数不超过80张，隐藏按钮
+if (allImages.length <= batchSize) {
+    if (loadMoreArea) loadMoreArea.style.display = 'none';
+}
+
+// 加载更多图片
+function loadMoreImages() {
+    if (isLoading) return;
+    if (loadedCount >= allImages.length) {
+        if (loadMoreArea) {
+            loadMoreArea.innerHTML = '<div class="loading" data-cn="共 ' + allImages.length + ' 张图片，已全部加载" data-en="Total ' + allImages.length + ' images, all loaded">共 ' + allImages.length + ' 张图片，已全部加载</div>';
+        }
+        return;
+    }
+    
+    isLoading = true;
+    if (loadMoreBtn) loadMoreBtn.textContent = '加载中...';
+    
+    // 获取下一批图片
+    var nextBatch = allImages.slice(loadedCount, loadedCount + batchSize);
+    
+    if (nextBatch.length === 0) {
+        isLoading = false;
+        if (loadMoreArea) {
+            loadMoreArea.innerHTML = '<div class="loading" data-cn="共 ' + allImages.length + ' 张图片，已全部加载" data-en="Total ' + allImages.length + ' images, all loaded">共 ' + allImages.length + ' 张图片，已全部加载</div>';
+        }
+        return;
+    }
+    
+    // 渲染新图片
     var fragment = document.createDocumentFragment();
-    images.forEach(function(imgUrl) {
+    nextBatch.forEach(function(imgUrl) {
         var card = document.createElement('div');
         card.className = 'card';
         var img = document.createElement('img');
@@ -127,43 +136,18 @@ function renderImages(images) {
         fragment.appendChild(card);
     });
     galleryContainer.appendChild(fragment);
-}
-
-// 加载更多图片
-function loadMoreImages() {
-    if (isLoading || allLoaded) return;
     
-    isLoading = true;
-    var btn = document.getElementById('loadMoreBtn');
-    if (btn) btn.textContent = '加载中...';
+    loadedCount += nextBatch.length;
+    isLoading = false;
     
-    var nextPage = currentPage + 1;
-    
-    fetch('/api/images/' + nextPage + '.json')
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            renderImages(data.images);
-            currentPage = nextPage;
-            isLoading = false;
-            
-            // 检查是否还有更多
-            if (currentPage >= totalPages) {
-                allLoaded = true;
-                var area = document.getElementById('loadMoreArea');
-                if (area) {
-                    area.innerHTML = '<div class="loading" data-cn="共 ' + totalImages + ' 张图片，已全部加载" data-en="Total ' + totalImages + ' images, all loaded">共 ' + totalImages + ' 张图片，已全部加载</div>';
-                }
-            } else {
-                var btn = document.getElementById('loadMoreBtn');
-                if (btn) btn.textContent = '更多';
-            }
-        })
-        .catch(function(err) {
-            console.error('Failed to load images:', err);
-            isLoading = false;
-            var btn = document.getElementById('loadMoreBtn');
-            if (btn) btn.textContent = '加载失败，点击重试';
-        });
+    // 更新按钮状态
+    if (loadedCount >= allImages.length) {
+        if (loadMoreArea) {
+            loadMoreArea.innerHTML = '<div class="loading" data-cn="共 ' + allImages.length + ' 张图片，已全部加载" data-en="Total ' + allImages.length + ' images, all loaded">共 ' + allImages.length + ' 张图片，已全部加载</div>';
+        }
+    } else if (loadMoreBtn) {
+        loadMoreBtn.textContent = '更多';
+    }
 }
 </script>
 </BaseLayout>
