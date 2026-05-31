@@ -64,7 +64,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
 <!-- 警告框 -->
 <div class="warning-overlay" id="warningOverlay">
     <div class="warning-box">
-        <div class="warning-icon">⚠️</div>
+        <div class="warning-icon">️</div>
         <div class="warning-title">警告</div>
         <div class="warning-text">公开漏洞报告分享平台收录的所有漏洞均已修复，仅用于网络安全学习，严禁用于任何非法用途！</div>
         <div class="warning-btns">
@@ -74,19 +74,16 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     </div>
 </div>
 
-<!-- 存储所有文章数据供分页使用 -->
-<script is:inline>
-var allPostsData = [];
-{posts.map((post) => (
-  allPostsData.push({
-    title: post.data.title || post.slug,
-    cover: post.data.cover || '',
-    urlSlug: post.data.slug || post.slug
-  });
-))}
-</script>
+<!-- 存储所有文章数据 -->
+<script id="posts-data" type="application/json">{JSON.stringify(posts.map(p => ({ title: p.data.title || p.slug, cover: p.data.cover || '', urlSlug: p.data.slug || p.slug })))}</script>
 
 <script is:inline>
+var allPostsData = [];
+var dataEl = document.getElementById('posts-data');
+if (dataEl) {
+    allPostsData = JSON.parse(dataEl.textContent);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
     var isReturning = sessionStorage.getItem('isReturningFromOtherPage');
@@ -103,18 +100,19 @@ document.addEventListener("DOMContentLoaded", function() {
     var nextBtn = document.getElementById('nextBtn');
     var currentPage = 1;
     var postsPerPage = 9;
+    var totalPages = pageButtons.length;
     
     // 渲染指定页的卡片
     function renderPage(page) {
         var start = (page - 1) * postsPerPage;
-        var end = start + postsPerPage;
+        var end = Math.min(start + postsPerPage, allPostsData.length);
         var pagePosts = allPostsData.slice(start, end);
         
         grid.innerHTML = '';
         pagePosts.forEach(function(post) {
             var card = document.createElement('div');
             card.className = 'card';
-            card.dataset.slug = post.urlSlug;
+            card.setAttribute('data-slug', post.urlSlug);
             card.onclick = function() { navigateTo('/article/' + post.urlSlug); };
             
             var img = document.createElement('img');
@@ -133,7 +131,9 @@ document.addEventListener("DOMContentLoaded", function() {
         pageButtons.forEach(function(btn) {
             btn.classList.remove('active');
         });
-        pageButtons[page - 1].classList.add('active');
+        if (pageButtons[page - 1]) {
+            pageButtons[page - 1].classList.add('active');
+        }
         
         currentPage = page;
     }
@@ -141,23 +141,27 @@ document.addEventListener("DOMContentLoaded", function() {
     // 页码按钮点击
     pageButtons.forEach(function(btn) {
         btn.addEventListener('click', function() {
-            renderPage(parseInt(this.dataset.page));
+            renderPage(parseInt(this.getAttribute('data-page')));
         });
     });
     
     // 上一页
-    prevBtn.addEventListener('click', function() {
-        if (currentPage > 1) {
-            renderPage(currentPage - 1);
-        }
-    });
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            if (currentPage > 1) {
+                renderPage(currentPage - 1);
+            }
+        });
+    }
     
     // 下一页
-    nextBtn.addEventListener('click', function() {
-        if (currentPage < pageButtons.length) {
-            renderPage(currentPage + 1);
-        }
-    });
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                renderPage(currentPage + 1);
+            }
+        });
+    }
 });
 
 function closeWarning() {
