@@ -16,7 +16,8 @@ const firstPagePosts = posts.slice(0, postsPerPage);
 <BaseLayout title="挖洞吧" css={['articles.css']}>
 <div class="container" id="mainContainer">
     <div class="side-space"></div>
-    <div class="main">
+    <!-- 主内容默认隐藏，点击确认后显示 -->
+    <div class="main" id="mainContent" style="display: none;">
         <div class="top-bar">
             <div class="top-left">
                 <button class="back-btn" onclick="goBackToHome()">
@@ -66,10 +67,10 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     <div class="side-space"></div>
 </div>
 
-<!-- 警告框 -->
-<div class="warning-overlay" id="warningOverlay">
-    <div class="warning-box">
-        <div class="warning-icon">️</div>
+<!-- 警告框 - 默认直接显示 -->
+<div class="warning-overlay" id="warningOverlay" style="opacity: 1; visibility: visible;">
+    <div class="warning-box" style="transform: scale(1);">
+        <div class="warning-icon">⚠️</div>
         <div class="warning-title">警告</div>
         <div class="warning-text">公开漏洞报告分享平台收录的所有漏洞均已修复，仅用于网络安全学习，严禁用于任何非法用途！</div>
         <div class="warning-btns">
@@ -82,7 +83,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
 <!-- 总页数数据 -->
 <script id="total-pages" type="application/json">{totalPages}</script>
 
-<script>
+<script is:inline>
 (function() {
     var pageCache = { 1: [] };
     var currentPage = 1;
@@ -95,7 +96,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
         }
     } catch(e) {}
     
-    // 初始化缓存：将首屏已有的卡片存入缓存
     document.addEventListener('DOMContentLoaded', function() {
         var firstPageCards = document.querySelectorAll('#articleGrid .card');
         var cachedCards = [];
@@ -103,17 +103,8 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             cachedCards.push(firstPageCards[i]);
         }
         pageCache[1] = cachedCards;
-        
-        // 警告框
-        var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
-        var isReturning = sessionStorage.getItem('isReturningFromOtherPage');
-        if (!hasSeenWarning && !isReturning) {
-            document.getElementById('warningOverlay').classList.add('active');
-            sessionStorage.setItem('hasSeenArticlesWarning', 'true');
-        }
     });
     
-    // 渲染卡片到网格
     function renderCards(posts) {
         var grid = document.getElementById('articleGrid');
         grid.innerHTML = '';
@@ -135,11 +126,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             
             (function(p) {
                 card.addEventListener('click', function() {
-                    if (typeof navigateTo === 'function') {
-                        navigateTo('/article/' + p.urlSlug);
-                    } else {
-                        window.location.href = '/article/' + p.urlSlug;
-                    }
+                    window.location.href = '/article/' + p.urlSlug;
                 });
             })(post);
             
@@ -147,11 +134,9 @@ const firstPagePosts = posts.slice(0, postsPerPage);
         }
     }
     
-    // 切换页面（通过 API 加载）
     window.switchToPage = function(pageNum) {
         currentPage = pageNum;
         
-        // 已缓存则直接显示
         if (pageCache[pageNum]) {
             var grid = document.getElementById('articleGrid');
             grid.innerHTML = '';
@@ -162,13 +147,11 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             return;
         }
         
-        // 未缓存则请求 API
         fetch('/api/posts/' + pageNum + '.json')
             .then(function(res) { return res.json(); })
             .then(function(data) {
                 renderCards(data.posts);
                 
-                // 缓存 DOM 元素
                 var grid = document.getElementById('articleGrid');
                 var cards = [];
                 var allCards = grid.querySelectorAll('.card');
@@ -182,7 +165,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             .catch(function() {});
     };
     
-    // 更新按钮高亮
     function updateButtons(pageNum) {
         var btns = document.querySelectorAll('.page[data-page]');
         for (var k = 0; k < btns.length; k++) {
@@ -193,7 +175,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     }
     
     document.addEventListener('DOMContentLoaded', function() {
-        // 页码按钮
         var pageBtns = document.querySelectorAll('.page[data-page]');
         for (var i = 0; i < pageBtns.length; i++) {
             pageBtns[i].addEventListener('click', function() {
@@ -202,7 +183,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             });
         }
         
-        // 上一页
         var prevBtn = document.getElementById('prevBtn');
         if (prevBtn) {
             prevBtn.addEventListener('click', function() {
@@ -212,7 +192,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             });
         }
         
-        // 下一页
         var nextBtn = document.getElementById('nextBtn');
         if (nextBtn) {
             nextBtn.addEventListener('click', function() {
@@ -224,13 +203,22 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     });
 })();
 
-function closeWarning() {
-    document.getElementById('warningOverlay').classList.remove('active');
-}
+// 确认进入：隐藏警告框，显示主内容
+window.closeWarning = function() {
+    var overlay = document.getElementById('warningOverlay');
+    var main = document.getElementById('mainContent');
+    
+    // 添加淡出动画效果
+    overlay.style.opacity = '0';
+    overlay.style.visibility = 'hidden';
+    
+    // 显示主内容
+    main.style.display = '';
+};
 
-function backToHome() {
-    sessionStorage.removeItem('isReturningFromOtherPage');
+// 返回：跳转回首页
+window.backToHome = function() {
     window.location.href = '/';
-}
+};
 </script>
 </BaseLayout>
