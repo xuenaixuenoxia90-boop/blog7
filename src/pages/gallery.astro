@@ -73,83 +73,77 @@ const firstBatch = allImages.slice(0, batchSize);
 </div>
 
 <!-- 传递所有图片URL到前端 -->
-<script id="all-gallery-images" type="application/json">{JSON.stringify(allImages)}</script>
+<script id="all-gallery-images" type="application/json" set:html={JSON.stringify(allImages)}></script>
 
 <script is:inline>
-// 从脚本标签读取所有图片URL
-var allImages = [];
-try {
-    var scriptEl = document.getElementById('all-gallery-images');
-    if (scriptEl) {
-        allImages = JSON.parse(scriptEl.textContent);
+document.addEventListener('DOMContentLoaded', function() {
+    var allImages = [];
+    try {
+        var scriptEl = document.getElementById('all-gallery-images');
+        if (scriptEl) {
+            allImages = JSON.parse(scriptEl.textContent);
+        }
+    } catch(e) {
+        console.error('Failed to load images:', e);
     }
-} catch(e) {
-    console.error('Failed to load images:', e);
-}
 
-var batchSize = 80;
-var loadedCount = allImages.length > batchSize ? batchSize : allImages.length;
-var isLoading = false;
-
-// 加载更多图片
-function loadMoreImages() {
+    var batchSize = 80;
+    var loadedCount = allImages.length > batchSize ? batchSize : allImages.length;
+    var isLoading = false;
     var loadMoreArea = document.getElementById('loadMoreArea');
     var loadMoreBtn = document.getElementById('loadMoreBtn');
     var galleryContainer = document.getElementById('galleryContainer');
 
-    if (isLoading) return;
-    if (loadedCount >= allImages.length) {
-        if (loadMoreArea) {
-            loadMoreArea.innerHTML = '<div class="loading" data-cn="共 ' + allImages.length + ' 张图片，已全部加载" data-en="Total ' + allImages.length + ' images, all loaded">共 ' + allImages.length + ' 张图片，已全部加载</div>';
-        }
-        return;
+    if (allImages.length <= batchSize) {
+        if (loadMoreArea) loadMoreArea.style.display = 'none';
     }
-    
-    isLoading = true;
-    if (loadMoreBtn) loadMoreBtn.textContent = '加载中...';
-    
-    // 获取下一批图片
-    var nextBatch = allImages.slice(loadedCount, loadedCount + batchSize);
-    
-    if (nextBatch.length === 0) {
-        isLoading = false;
-        if (loadMoreArea) {
-            loadMoreArea.innerHTML = '<div class="loading" data-cn="共 ' + allImages.length + ' 张图片，已全部加载" data-en="Total ' + allImages.length + ' images, all loaded">共 ' + allImages.length + ' 张图片，已全部加载</div>';
-        }
-        return;
-    }
-    
-    // 渲染新图片
-    var fragment = document.createDocumentFragment();
-    nextBatch.forEach(function(imgUrl) {
-        var card = document.createElement('div');
-        card.className = 'card';
-        var img = document.createElement('img');
-        img.src = imgUrl;
-        img.alt = 'Gallery Image';
-        img.setAttribute('loading', 'lazy');
-        card.appendChild(img);
-        fragment.appendChild(card);
-    });
-    galleryContainer.appendChild(fragment);
-    
-    loadedCount += nextBatch.length;
-    isLoading = false;
-    
-    // 更新按钮状态
-    if (loadedCount >= allImages.length) {
-        if (loadMoreArea) {
-            loadMoreArea.innerHTML = '<div class="loading" data-cn="共 ' + allImages.length + ' 张图片，已全部加载" data-en="Total ' + allImages.length + ' images, all loaded">共 ' + allImages.length + ' 张图片，已全部加载</div>';
-        }
-    } else if (loadMoreBtn) {
-        loadMoreBtn.textContent = '更多';
-    }
-}
 
-// 如果图片总数不超过80张，隐藏按钮
-if (allImages.length <= batchSize) {
-    var loadMoreArea = document.getElementById('loadMoreArea');
-    if (loadMoreArea) loadMoreArea.style.display = 'none';
-}
+    window.loadMoreImages = function() {
+        if (isLoading) return;
+        if (loadedCount >= allImages.length) {
+            if (loadMoreArea) {
+                loadMoreArea.innerHTML = '<div class="loading">共 ' + allImages.length + ' 张图片，已全部加载</div>';
+            }
+            return;
+        }
+        
+        isLoading = true;
+        if (loadMoreBtn) loadMoreBtn.textContent = '加载中...';
+        
+        var nextBatch = allImages.slice(loadedCount, loadedCount + batchSize);
+        
+        if (nextBatch.length === 0) {
+            isLoading = false;
+            if (loadMoreArea) {
+                loadMoreArea.innerHTML = '<div class="loading">共 ' + allImages.length + ' 张图片，已全部加载</div>';
+            }
+            return;
+        }
+        
+        var fragment = document.createDocumentFragment();
+        nextBatch.forEach(function(imgUrl) {
+            var card = document.createElement('div');
+            card.className = 'card';
+            var img = document.createElement('img');
+            img.src = imgUrl;
+            img.alt = 'Gallery Image';
+            img.setAttribute('loading', 'lazy');
+            card.appendChild(img);
+            fragment.appendChild(card);
+        });
+        galleryContainer.appendChild(fragment);
+        
+        loadedCount += nextBatch.length;
+        isLoading = false;
+        
+        if (loadedCount >= allImages.length) {
+            if (loadMoreArea) {
+                loadMoreArea.innerHTML = '<div class="loading">共 ' + allImages.length + ' 张图片，已全部加载</div>';
+            }
+        } else if (loadMoreBtn) {
+            loadMoreBtn.textContent = '更多';
+        }
+    };
+});
 </script>
 </BaseLayout>
