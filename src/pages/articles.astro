@@ -63,8 +63,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
                     <option value={i + 1}>{i + 1}</option>
                 ))}
             </select>
-            <span class="page-label">/{totalPages}页</span>
-            <button class="jump-btn" id="jumpBtn" onclick="window.jumpToPage()">跳转</button>
+            <span class="page-label">页 / 共 {totalPages} 页</span>
         </div>
     </div>
     <div class="side-space"></div>
@@ -172,14 +171,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             select.value = String(pageNum);
         }
     }
-    
-    window.jumpToPage = function() {
-        var select = document.getElementById('pageSelect');
-        if (select) {
-            var pageNum = parseInt(select.value);
-            window.switchToPage(pageNum);
-        }
-    };
     
     document.addEventListener('DOMContentLoaded', function() {
         var select = document.getElementById('pageSelect');
