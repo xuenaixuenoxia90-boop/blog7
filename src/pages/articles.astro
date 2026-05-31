@@ -2,10 +2,15 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const posts = await getCollection('blog');
+const allPosts = await getCollection('blog');
+// 按 slug 编号排序
+const posts = [...allPosts].sort((a, b) => {
+  const slugA = a.data.slug || a.slug;
+  const slugB = b.data.slug || b.slug;
+  return slugA.localeCompare(slugB);
+});
 const postsPerPage = 9;
 const totalPages = Math.ceil(posts.length / postsPerPage);
-const firstPagePosts = posts.slice(0, postsPerPage);
 ---
 
 <BaseLayout title="挖洞吧" css={['articles.css']}>
@@ -26,7 +31,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
                 </div>
             </div>
             <div class="language-box">
-                <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
+                <button class="language-btn" id="currentLang"><span class="lang-icon"></span><span class="lang-text">简体中文</span></button>
                 <div class="language-dropdown">
                     <button class="language-item" onclick="switchLanguage('zh')">简体中文</button>
                     <button class="language-item" onclick="switchLanguage('en')">English</button>
@@ -38,12 +43,13 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             <button class="search-btn" data-cn="🔍 搜索" data-en=" Search"> 搜索</button>
         </div>
         <div class="article-grid" id="articleGrid">
-            {firstPagePosts.map((post) => {
+            {posts.map((post, index) => {
               const title = post.data.title || post.slug;
               const cover = post.data.cover || '';
               const urlSlug = post.data.slug || post.slug;
+              const pageNum = Math.floor(index / postsPerPage) + 1;
               return (
-                <div class="card" data-slug={urlSlug} onclick="navigateTo('/article/' + this.dataset.slug)">
+                <div class="card" class:list={[{ hidden: pageNum > 1 }]} data-slug={urlSlug} data-page={pageNum} onclick="navigateTo('/article/' + this.dataset.slug)">
                   <img src={cover || `https://picsum.photos/300/200?${urlSlug}`} alt={title} />
                   <h3>{title}</h3>
                 </div>
@@ -74,108 +80,78 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     </div>
 </div>
 
-<!-- 存储所有文章数据 -->
-<script id="posts-data" type="application/json">{JSON.stringify(posts.map(p => ({ title: p.data.title || p.slug, cover: p.data.cover || '', urlSlug: p.data.slug || p.slug })))}</script>
-
-<script>
-var allPostsData = [];
-try {
-    var dataEl = document.getElementById('posts-data');
-    if (dataEl) {
-        allPostsData = JSON.parse(dataEl.textContent);
-    }
-} catch(e) {
-    console.error('Error loading posts data:', e);
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
-    var isReturning = sessionStorage.getItem('isReturningFromOtherPage');
-    
-    if (!hasSeenWarning && !isReturning) {
-        document.getElementById('warningOverlay').classList.add('active');
-        sessionStorage.setItem('hasSeenArticlesWarning', 'true');
-    }
-    
-    // 分页功能
-    var grid = document.getElementById('articleGrid');
-    var pageButtons = document.querySelectorAll('.page[data-page]');
-    var prevBtn = document.getElementById('prevBtn');
-    var nextBtn = document.getElementById('nextBtn');
-    var currentPage = 1;
-    var postsPerPage = 9;
-    var totalPages = pageButtons.length;
-    
-    // 渲染指定页的卡片
-    function renderPage(page) {
-        var start = (page - 1) * postsPerPage;
-        var end = Math.min(start + postsPerPage, allPostsData.length);
-        var pagePosts = allPostsData.slice(start, end);
+<script is:inline>
+(function() {
+    // 切换页面
+    window.switchToPage = function(pageNum) {
+        var cards = document.querySelectorAll('.card[data-page]');
+        var pageBtns = document.querySelectorAll('.page[data-page]');
         
-        grid.innerHTML = '';
-        
-        pagePosts.forEach(function(post) {
-            var card = document.createElement('div');
-            card.className = 'card';
-            card.setAttribute('data-slug', post.urlSlug);
-            
-            var img = document.createElement('img');
-            img.src = post.cover || ('https://picsum.photos/300/200?' + post.urlSlug);
-            img.alt = post.title;
-            
-            var h3 = document.createElement('h3');
-            h3.textContent = post.title;
-            
-            card.appendChild(img);
-            card.appendChild(h3);
-            
-            card.addEventListener('click', function() {
-                navigateTo('/article/' + post.urlSlug);
-            });
-            
-            grid.appendChild(card);
-        });
-        
-        // 更新按钮状态
-        pageButtons.forEach(function(btn) {
-            btn.classList.remove('active');
-        });
-        if (pageButtons[page - 1]) {
-            pageButtons[page - 1].classList.add('active');
+        // 隐藏所有卡片
+        for (var i = 0; i < cards.length; i++) {
+            cards[i].style.display = 'none';
         }
         
-        currentPage = page;
-    }
+        // 显示目标页的卡片
+        for (var j = 0; j < cards.length; j++) {
+            if (cards[j].getAttribute('data-page') === String(pageNum)) {
+                cards[j].style.display = 'flex';
+            }
+        }
+        
+        // 更新按钮高亮
+        for (var k = 0; k < pageBtns.length; k++) {
+            pageBtns[k].classList.remove('active');
+        }
+        var activeBtn = document.querySelector('.page[data-page="' + pageNum + '"]');
+        if (activeBtn) activeBtn.classList.add('active');
+    };
     
-    // 页码按钮点击
-    pageButtons.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            var pageNum = parseInt(this.getAttribute('data-page'));
-            renderPage(pageNum);
-        });
+    // 绑定事件
+    document.addEventListener('DOMContentLoaded', function() {
+        // 警告框
+        var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
+        var isReturning = sessionStorage.getItem('isReturningFromOtherPage');
+        if (!hasSeenWarning && !isReturning) {
+            document.getElementById('warningOverlay').classList.add('active');
+            sessionStorage.setItem('hasSeenArticlesWarning', 'true');
+        }
+        
+        // 页码按钮
+        var pageBtns = document.querySelectorAll('.page[data-page]');
+        for (var i = 0; i < pageBtns.length; i++) {
+            pageBtns[i].addEventListener('click', function() {
+                var pageNum = parseInt(this.getAttribute('data-page'));
+                window.switchToPage(pageNum);
+            });
+        }
+        
+        // 上一页
+        var prevBtn = document.getElementById('prevBtn');
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function() {
+                var activeBtn = document.querySelector('.page.active');
+                if (activeBtn) {
+                    var current = parseInt(activeBtn.getAttribute('data-page'));
+                    if (current > 1) window.switchToPage(current - 1);
+                }
+            });
+        }
+        
+        // 下一页
+        var nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function() {
+                var activeBtn = document.querySelector('.page.active');
+                if (activeBtn) {
+                    var current = parseInt(activeBtn.getAttribute('data-page'));
+                    var totalBtns = document.querySelectorAll('.page[data-page]').length;
+                    if (current < totalBtns) window.switchToPage(current + 1);
+                }
+            });
+        }
     });
-    
-    // 上一页
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (currentPage > 1) {
-                renderPage(currentPage - 1);
-            }
-        });
-    }
-    
-    // 下一页
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (currentPage < totalPages) {
-                renderPage(currentPage + 1);
-            }
-        });
-    }
-});
+})();
 
 function closeWarning() {
     document.getElementById('warningOverlay').classList.remove('active');
