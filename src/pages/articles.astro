@@ -163,7 +163,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
         }
         
         // 未缓存则请求 API
-        fetch('/api/posts.json?page=' + pageNum)
+        fetch('/api/posts/' + pageNum + '.json')
             .then(function(res) { return res.json(); })
             .then(function(data) {
                 renderCards(data.posts);
