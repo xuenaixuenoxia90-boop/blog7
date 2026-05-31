@@ -1,5 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// 读取 pictures.md 文件并提取图片链接
+const picturesPath = join(dirname(fileURLToPath(import.meta.url)), '../content/pictures/pictures.md');
+const picturesContent = readFileSync(picturesPath, 'utf-8');
+
+// 匹配 ![img](url) 格式提取图片链接
+const imageRegex = /!\[img\]\(([^)]+)\)/g;
+const images = [];
+let match;
+while ((match = imageRegex.exec(picturesContent)) !== null) {
+  images.push(match[1]);
+}
+
+// 限制显示数量（避免过多图片导致页面加载慢）
+const maxImages = 100;
+const displayImages = images.slice(0, maxImages);
 ---
 
 <BaseLayout title="赏图吧" css={['gallery.css']}>
@@ -35,29 +54,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
         <!-- 瀑布流 -->
         <div class="gallery">
-            <div class="card"><img src="https://picsum.photos/500/700?20"></div>
-            <div class="card"><img src="https://picsum.photos/500/400?21"></div>
-            <div class="card"><img src="https://picsum.photos/500/600?22"></div>
-            <div class="card"><img src="https://picsum.photos/500/500?23"></div>
-            <div class="card"><img src="https://picsum.photos/500/650?24"></div>
-            <div class="card"><img src="https://picsum.photos/500/450?25"></div>
-            <div class="card"><img src="https://picsum.photos/500/550?26"></div>
-            <div class="card"><img src="https://picsum.photos/500/700?27"></div>
-            <div class="card"><img src="https://picsum.photos/500/400?28"></div>
-            <div class="card"><img src="https://picsum.photos/500/620?29"></div>
-            <div class="card"><img src="https://picsum.photos/500/480?30"></div>
-            <div class="card"><img src="https://picsum.photos/500/720?31"></div>
-            <div class="card"><img src="https://picsum.photos/500/520?32"></div>
-            <div class="card"><img src="https://picsum.photos/500/580?33"></div>
-            <div class="card"><img src="https://picsum.photos/500/460?34"></div>
-            <div class="card"><img src="https://picsum.photos/500/640?35"></div>
-            <div class="card"><img src="https://picsum.photos/500/540?36"></div>
-            <div class="card"><img src="https://picsum.photos/500/680?37"></div>
-            <div class="card"><img src="https://picsum.photos/500/420?38"></div>
-            <div class="card"><img src="https://picsum.photos/500/660?39"></div>
+            {displayImages.map((imgUrl) => (
+              <div class="card">
+                <img src={imgUrl} alt="Gallery Image" loading="lazy" />
+              </div>
+            ))}
         </div>
-        <!-- 加载提示 -->
-        <div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>
+        {images.length > maxImages && (
+          <div class="loading" data-cn={`共 ${images.length} 张图片，已显示前 ${maxImages} 张`} data-en={`Total ${images.length} images, showing first ${maxImages}`}>
+            共 {images.length} 张图片，已显示前 {maxImages} 张
+          </div>
+        )}
+        {images.length <= maxImages && (
+          <div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>
+        )}
     </div>
     <!-- 右广告 -->
     <div class="ad-right"></div>
