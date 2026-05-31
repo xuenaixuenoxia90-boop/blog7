@@ -81,7 +81,12 @@ const firstPagePosts = posts.slice(0, postsPerPage);
 var allPostsData = [];
 var dataEl = document.getElementById('posts-data');
 if (dataEl) {
-    allPostsData = JSON.parse(dataEl.textContent);
+    try {
+        allPostsData = JSON.parse(dataEl.textContent);
+        console.log('Loaded ' + allPostsData.length + ' posts');
+    } catch(e) {
+        console.error('Error parsing posts data:', e);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -102,11 +107,15 @@ document.addEventListener("DOMContentLoaded", function() {
     var postsPerPage = 9;
     var totalPages = pageButtons.length;
     
+    console.log('Total pages:', totalPages, 'Total posts:', allPostsData.length);
+    
     // 渲染指定页的卡片
     function renderPage(page) {
         var start = (page - 1) * postsPerPage;
         var end = Math.min(start + postsPerPage, allPostsData.length);
         var pagePosts = allPostsData.slice(start, end);
+        
+        console.log('Rendering page ' + page + ', posts ' + start + '-' + end);
         
         grid.innerHTML = '';
         pagePosts.forEach(function(post) {
@@ -139,15 +148,20 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     // 页码按钮点击
-    pageButtons.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            renderPage(parseInt(this.getAttribute('data-page')));
+    pageButtons.forEach(function(btn, index) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var pageNum = parseInt(this.getAttribute('data-page'));
+            console.log('Clicked page button:', pageNum);
+            renderPage(pageNum);
         });
     });
     
     // 上一页
     if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Clicked prev, currentPage:', currentPage);
             if (currentPage > 1) {
                 renderPage(currentPage - 1);
             }
@@ -156,7 +170,9 @@ document.addEventListener("DOMContentLoaded", function() {
     
     // 下一页
     if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Clicked next, currentPage:', currentPage, 'totalPages:', totalPages);
             if (currentPage < totalPages) {
                 renderPage(currentPage + 1);
             }
