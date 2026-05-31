@@ -9,15 +9,17 @@ const picturesContent = readFileSync(picturesPath, 'utf-8');
 
 // 匹配 ![img](url) 格式提取图片链接
 const imageRegex = /!\[img\]\(([^)]+)\)/g;
-const images = [];
+const allImages = [];
 let match;
 while ((match = imageRegex.exec(picturesContent)) !== null) {
-  images.push(match[1]);
+  allImages.push(match[1]);
 }
 
-// 限制显示数量（避免过多图片导致页面加载慢）
-const maxImages = 100;
-const displayImages = images.slice(0, maxImages);
+// 每批加载的图片数量
+const batchSize = 80;
+
+// 首屏渲染的图片
+const firstBatch = allImages.slice(0, batchSize);
 ---
 
 <BaseLayout title="赏图吧" css={['gallery.css']}>
@@ -51,24 +53,110 @@ const displayImages = images.slice(0, maxImages);
                 </div>
             </div>
         </div>
-        <!-- 瀑布流 -->
-        <div class="gallery">
-            {displayImages.map((imgUrl) => (
+        <!-- 瀑布流容器 -->
+        <div class="gallery" id="galleryContainer">
+            {firstBatch.map((imgUrl) => (
               <div class="card">
                 <img src={imgUrl} alt="Gallery Image" loading="lazy" />
               </div>
             ))}
         </div>
-        {images.length > maxImages && (
-          <div class="loading" data-cn={`共 ${images.length} 张图片，已显示前 ${maxImages} 张`} data-en={`Total ${images.length} images, showing first ${maxImages}`}>
-            共 {images.length} 张图片，已显示前 {maxImages} 张
-          </div>
-        )}
-        {images.length <= maxImages && (
-          <div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>
-        )}
+        <!-- 加载状态 -->
+        <div class="loading" id="loadingStatus">
+            {allImages.length > batchSize
+              ? `已加载 ${batchSize} / ${allImages.length} 张图片，滚动加载更多...`
+              : `共 ${allImages.length} 张图片，已全部加载`}
+        </div>
     </div>
     <!-- 右广告 -->
     <div class="ad-right"></div>
 </div>
+
+<!-- 传递全部图片数据到前端 -->
+<script id="gallery-images" type="application/json">{JSON.stringify(allImages)}</script>
+
+<script>
+(function() {
+    var allImages = [];
+    var batchSize = 80;
+    var currentBatch = 1; // 第1批已渲染
+    var isLoading = false;
+    var allLoaded = false;
+    
+    // 读取图片数据
+    try {
+        var imgScript = document.getElementById('gallery-images');
+        if (imgScript) {
+            allImages = JSON.parse(imgScript.textContent);
+        }
+    } catch(e) {
+        console.error('Failed to load gallery images:', e);
+    }
+    
+    var galleryContainer = document.getElementById('galleryContainer');
+    var loadingStatus = document.getElementById('loadingStatus');
+    
+    // 检查是否全部加载完毕
+    if (allImages.length <= batchSize) {
+        allLoaded = true;
+    }
+    
+    // 渲染下一批图片
+    function renderNextBatch() {
+        if (isLoading || allLoaded) return;
+        
+        isLoading = true;
+        loadingStatus.textContent = '加载中...';
+        
+        var start = currentBatch * batchSize;
+        var end = Math.min(start + batchSize, allImages.length);
+        var batchImages = allImages.slice(start, end);
+        
+        if (batchImages.length === 0) {
+            allLoaded = true;
+            loadingStatus.textContent = '没有更多了～';
+            isLoading = false;
+            return;
+        }
+        
+        // 创建文档片段批量插入
+        var fragment = document.createDocumentFragment();
+        batchImages.forEach(function(imgUrl) {
+            var card = document.createElement('div');
+            card.className = 'card';
+            var img = document.createElement('img');
+            img.src = imgUrl;
+            img.alt = 'Gallery Image';
+            img.setAttribute('loading', 'lazy');
+            card.appendChild(img);
+            fragment.appendChild(card);
+        });
+        
+        galleryContainer.appendChild(fragment);
+        currentBatch++;
+        isLoading = false;
+        
+        // 更新加载状态
+        if (end >= allImages.length) {
+            allLoaded = true;
+            loadingStatus.textContent = '共 ' + allImages.length + ' 张图片，已全部加载';
+        } else {
+            loadingStatus.textContent = '已加载 ' + end + ' / ' + allImages.length + ' 张图片，滚动加载更多...';
+        }
+    }
+    
+    // 滚动监听 - 距离底部200px时加载下一批
+    window.addEventListener('scroll', function() {
+        if (isLoading || allLoaded) return;
+        
+        var scrollHeight = document.documentElement.scrollHeight;
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var clientHeight = window.innerHeight;
+        
+        if (scrollHeight - scrollTop - clientHeight < 200) {
+            renderNextBatch();
+        }
+    });
+})();
+</script>
 </BaseLayout>
