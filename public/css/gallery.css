@@ -88,9 +88,15 @@ body{
 
 /* 瀑布流 */
 .gallery{
-    column-count:3;
-    column-gap:24px;
+    display:flex;
+    gap:24px;
     margin-bottom:40px;
+}
+
+.gallery-column{
+    flex:1;
+    display:flex;
+    flex-direction:column;
 }
 
 /* 加载更多按钮区域 */
@@ -129,13 +135,16 @@ body{
 .card{
     width:100%;
     margin-bottom:24px;
-    break-inside:avoid;
     border-radius:28px;
     overflow:hidden;
     background:white;
     box-shadow:0 8px 25px rgba(0,0,0,.05);
     cursor:pointer;
     transition:.25s;
+}
+
+.card:last-child{
+    margin-bottom:0;
 }
 
 .card:hover{
@@ -185,8 +194,10 @@ body{
         width:900px;
     }
     .gallery{
-        column-count:2;
-        column-gap:20px;
+        gap:20px;
+    }
+    #column2{
+        display:none;
     }
 }
 
@@ -270,8 +281,7 @@ body{
     }
 
     .gallery{
-        column-count:2;
-        column-gap:12px;
+        gap:12px;
     }
 
     .card{
