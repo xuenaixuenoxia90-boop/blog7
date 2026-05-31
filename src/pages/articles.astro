@@ -11,6 +11,9 @@ const posts = [...allPosts].sort((a, b) => {
 });
 const postsPerPage = 9;
 const totalPages = Math.ceil(posts.length / postsPerPage);
+const firstPagePosts = posts.slice(0, postsPerPage);
+// 其余文章转为 JSON
+const restPosts = posts.slice(postsPerPage);
 ---
 
 <BaseLayout title="挖洞吧" css={['articles.css']}>
@@ -43,13 +46,12 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
             <button class="search-btn" data-cn="🔍 搜索" data-en=" Search"> 搜索</button>
         </div>
         <div class="article-grid" id="articleGrid">
-            {posts.map((post, index) => {
+            {firstPagePosts.map((post) => {
               const title = post.data.title || post.slug;
               const cover = post.data.cover || '';
               const urlSlug = post.data.slug || post.slug;
-              const pageNum = Math.floor(index / postsPerPage) + 1;
               return (
-                <div class={pageNum > 1 ? 'card hidden' : 'card'} data-slug={urlSlug} data-page={pageNum} onclick="navigateTo('/article/' + this.dataset.slug)">
+                <div class="card" data-slug={urlSlug} data-page="1" onclick="navigateTo('/article/' + this.dataset.slug)">
                   <img src={cover || `https://picsum.photos/300/200?${urlSlug}`} alt={title} />
                   <h3>{title}</h3>
                 </div>
@@ -80,23 +82,71 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
     </div>
 </div>
 
+<!-- 其余文章数据 -->
+<script id="rest-posts" type="application/json">{JSON.stringify(restPosts.map(p => ({ title: p.data.title || p.slug, cover: p.data.cover || '', urlSlug: p.data.slug || p.slug })))}</script>
+
 <script is:inline>
 (function() {
-    // 切换页面
+    var restPosts = [];
+    try {
+        var dataEl = document.getElementById('rest-posts');
+        if (dataEl) {
+            restPosts = JSON.parse(dataEl.textContent);
+        }
+    } catch(e) {}
+    
+    // 缓存各页卡片（懒加载）
+    var pageCache = {};
+    
     window.switchToPage = function(pageNum) {
-        var cards = document.querySelectorAll('.card[data-page]');
+        var grid = document.getElementById('articleGrid');
         var pageBtns = document.querySelectorAll('.page[data-page]');
         
-        // 隐藏所有卡片
-        for (var i = 0; i < cards.length; i++) {
-            cards[i].style.display = 'none';
-        }
-        
-        // 显示目标页的卡片
-        for (var j = 0; j < cards.length; j++) {
-            if (cards[j].getAttribute('data-page') === String(pageNum)) {
-                cards[j].style.display = 'flex';
+        // 如果目标页已缓存，直接显示
+        if (pageCache[pageNum]) {
+            grid.innerHTML = '';
+            for (var i = 0; i < pageCache[pageNum].length; i++) {
+                grid.appendChild(pageCache[pageNum][i]);
             }
+        } else {
+            // 动态创建卡片
+            var start = (pageNum - 1) * 9;
+            var end = Math.min(start + 9, restPosts.length + 9);
+            var pagePosts = restPosts.slice(start - 9, end - 9);
+            
+            grid.innerHTML = '';
+            var cards = [];
+            for (var j = 0; j < pagePosts.length; j++) {
+                var post = pagePosts[j];
+                var card = document.createElement('div');
+                card.className = 'card';
+                card.setAttribute('data-slug', post.urlSlug);
+                card.setAttribute('data-page', String(pageNum));
+                
+                var img = document.createElement('img');
+                img.src = post.cover || ('https://picsum.photos/300/200?' + post.urlSlug);
+                img.alt = post.title;
+                
+                var h3 = document.createElement('h3');
+                h3.textContent = post.title;
+                
+                card.appendChild(img);
+                card.appendChild(h3);
+                
+                (function(p) {
+                    card.addEventListener('click', function() {
+                        if (typeof navigateTo === 'function') {
+                            navigateTo('/article/' + p.urlSlug);
+                        } else {
+                            window.location.href = '/article/' + p.urlSlug;
+                        }
+                    });
+                })(post);
+                
+                cards.push(card);
+                grid.appendChild(card);
+            }
+            pageCache[pageNum] = cards;
         }
         
         // 更新按钮高亮
@@ -107,7 +157,6 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
         if (activeBtn) activeBtn.classList.add('active');
     };
     
-    // 绑定事件
     document.addEventListener('DOMContentLoaded', function() {
         // 警告框
         var hasSeenWarning = sessionStorage.getItem('hasSeenArticlesWarning');
