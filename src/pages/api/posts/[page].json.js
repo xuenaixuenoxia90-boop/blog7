@@ -1,4 +1,3 @@
----
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('blog');
@@ -22,16 +21,19 @@ export async function getStaticPaths() {
   }));
 }
 
-const { pageNum, pagePosts, totalPages } = Astro.props;
-const postsPerPage = 9;
----
-{JSON.stringify({
-  posts: pagePosts.map(p => ({
-    title: p.data.title || p.slug,
-    cover: p.data.cover || '',
-    urlSlug: p.data.slug || p.slug
-  })),
-  page: pageNum,
-  totalPages,
-  total: posts.length
-})}
+export async function GET({ params, props }) {
+  const { pageNum, pagePosts, totalPages } = props;
+  
+  return new Response(JSON.stringify({
+    posts: pagePosts.map(p => ({
+      title: p.data.title || p.slug,
+      cover: p.data.cover || '',
+      urlSlug: p.data.slug || p.slug
+    })),
+    page: pageNum,
+    totalPages,
+    total: posts.length
+  }), {
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
