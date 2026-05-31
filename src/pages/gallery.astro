@@ -66,17 +66,13 @@ const hasMore = allImages.length > batchSize;
             ))}
         </div>
         <!-- 加载更多按钮 -->
-        {hasMore && (
-          <div class="load-more-wrap" id="loadMoreWrap">
+        <div class="load-more-area" id="loadMoreArea">
+            {hasMore && (
               <button class="load-more-btn" id="loadMoreBtn" onclick="loadMoreImages()">
-                  加载更多图片
+                  更多
               </button>
-          </div>
-        )}
-        <!-- 加载完成提示 -->
-        {!hasMore && (
-          <div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>
-        )}
+            )}
+        </div>
     </div>
     <!-- 右广告 -->
     <div class="ad-right"></div>
@@ -109,8 +105,10 @@ try {
 // 检查是否全部加载完毕
 if (totalPages <= 1) {
     allLoaded = true;
-    var wrap = document.getElementById('loadMoreWrap');
-    if (wrap) wrap.style.display = 'none';
+    var area = document.getElementById('loadMoreArea');
+    if (area) {
+        area.innerHTML = '<div class="loading" data-cn="没有更多了～" data-en="No more~">没有更多了～</div>';
+    }
 }
 
 var galleryContainer = document.getElementById('galleryContainer');
@@ -151,13 +149,13 @@ function loadMoreImages() {
             // 检查是否还有更多
             if (currentPage >= totalPages) {
                 allLoaded = true;
-                var wrap = document.getElementById('loadMoreWrap');
-                if (wrap) {
-                    wrap.innerHTML = '<div class="loading" data-cn="共 ' + totalImages + ' 张图片，已全部加载" data-en="Total ' + totalImages + ' images, all loaded">共 ' + totalImages + ' 张图片，已全部加载</div>';
+                var area = document.getElementById('loadMoreArea');
+                if (area) {
+                    area.innerHTML = '<div class="loading" data-cn="共 ' + totalImages + ' 张图片，已全部加载" data-en="Total ' + totalImages + ' images, all loaded">共 ' + totalImages + ' 张图片，已全部加载</div>';
                 }
             } else {
                 var btn = document.getElementById('loadMoreBtn');
-                if (btn) btn.textContent = '加载更多图片';
+                if (btn) btn.textContent = '更多';
             }
         })
         .catch(function(err) {
