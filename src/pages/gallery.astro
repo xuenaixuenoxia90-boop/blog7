@@ -1,9 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { readFileSync } from 'fs';
+import path from 'path';
 
-// 读取 pictures.md 文件并提取图片链接
-const picturesContent = readFileSync('src/content/pictures/pictures.md', 'utf-8');
+// 使用 process.cwd() 获取项目根目录（不受编译输出路径影响）
+const picturesPath = path.join(process.cwd(), 'src', 'content', 'pictures', 'pictures.md');
+const picturesContent = readFileSync(picturesPath, 'utf-8');
 
 // 匹配 ![img](url) 格式提取图片链接
 const imageRegex = /!\[img\]\(([^)]+)\)/g;
