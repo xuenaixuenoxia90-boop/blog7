@@ -49,7 +49,7 @@ const totalPages = Math.ceil(posts.length / postsPerPage);
               const urlSlug = post.data.slug || post.slug;
               const pageNum = Math.floor(index / postsPerPage) + 1;
               return (
-                <div class="card" class:list={[{ hidden: pageNum > 1 }]} data-slug={urlSlug} data-page={pageNum} onclick="navigateTo('/article/' + this.dataset.slug)">
+                <div class={pageNum > 1 ? 'card hidden' : 'card'} data-slug={urlSlug} data-page={pageNum} onclick="navigateTo('/article/' + this.dataset.slug)">
                   <img src={cover || `https://picsum.photos/300/200?${urlSlug}`} alt={title} />
                   <h3>{title}</h3>
                 </div>
