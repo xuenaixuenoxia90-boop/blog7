@@ -57,11 +57,14 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             })}
         </div>
         <div class="pagination" id="pagination">
-            <button class="page prev-btn" id="prevBtn">&lt;</button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button class={`page ${i === 0 ? 'active' : ''}`} data-page={i + 1}>{i + 1}</button>
-            ))}
-            <button class="page next-btn" id="nextBtn">&gt;</button>
+            <span class="page-label">第</span>
+            <select class="page-select" id="pageSelect">
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <option value={i + 1}>{i + 1}</option>
+                ))}
+            </select>
+            <span class="page-label">/{totalPages}页</span>
+            <button class="jump-btn" id="jumpBtn" onclick="window.jumpToPage()">跳转</button>
         </div>
     </div>
     <div class="side-space"></div>
@@ -136,6 +139,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     
     window.switchToPage = function(pageNum) {
         currentPage = pageNum;
+        updatePageSelect(pageNum);
         
         if (pageCache[pageNum]) {
             var grid = document.getElementById('articleGrid');
@@ -143,7 +147,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             for (var i = 0; i < pageCache[pageNum].length; i++) {
                 grid.appendChild(pageCache[pageNum][i]);
             }
-            updateButtons(pageNum);
             return;
         }
         
@@ -159,64 +162,44 @@ const firstPagePosts = posts.slice(0, postsPerPage);
                     cards.push(allCards[j]);
                 }
                 pageCache[pageNum] = cards;
-                
-                updateButtons(pageNum);
             })
             .catch(function() {});
     };
     
-    function updateButtons(pageNum) {
-        var btns = document.querySelectorAll('.page[data-page]');
-        for (var k = 0; k < btns.length; k++) {
-            btns[k].classList.remove('active');
+    function updatePageSelect(pageNum) {
+        var select = document.getElementById('pageSelect');
+        if (select) {
+            select.value = String(pageNum);
         }
-        var activeBtn = document.querySelector('.page[data-page="' + pageNum + '"]');
-        if (activeBtn) activeBtn.classList.add('active');
     }
     
+    window.jumpToPage = function() {
+        var select = document.getElementById('pageSelect');
+        if (select) {
+            var pageNum = parseInt(select.value);
+            window.switchToPage(pageNum);
+        }
+    };
+    
     document.addEventListener('DOMContentLoaded', function() {
-        var pageBtns = document.querySelectorAll('.page[data-page]');
-        for (var i = 0; i < pageBtns.length; i++) {
-            pageBtns[i].addEventListener('click', function() {
-                var pageNum = parseInt(this.getAttribute('data-page'));
+        var select = document.getElementById('pageSelect');
+        if (select) {
+            select.addEventListener('change', function() {
+                var pageNum = parseInt(this.value);
                 window.switchToPage(pageNum);
-            });
-        }
-        
-        var prevBtn = document.getElementById('prevBtn');
-        if (prevBtn) {
-            prevBtn.addEventListener('click', function() {
-                if (currentPage > 1) {
-                    window.switchToPage(currentPage - 1);
-                }
-            });
-        }
-        
-        var nextBtn = document.getElementById('nextBtn');
-        if (nextBtn) {
-            nextBtn.addEventListener('click', function() {
-                if (currentPage < totalPages) {
-                    window.switchToPage(currentPage + 1);
-                }
             });
         }
     });
 })();
 
-// 确认进入：隐藏警告框，显示主内容
 window.closeWarning = function() {
     var overlay = document.getElementById('warningOverlay');
     var main = document.getElementById('mainContent');
-    
-    // 添加淡出动画效果
     overlay.style.opacity = '0';
     overlay.style.visibility = 'hidden';
-    
-    // 显示主内容
     main.style.display = '';
 };
 
-// 返回：跳转回首页
 window.backToHome = function() {
     window.location.href = '/';
 };
