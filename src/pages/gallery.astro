@@ -55,11 +55,9 @@ const firstBatch = allImages.slice(0, batchSize);
         </div>
         <!-- 瀑布流容器 -->
         <div class="gallery" id="galleryContainer">
-            {firstBatch.map((imgUrl) => (
-              <div class="card">
-                <img src={imgUrl} alt="Gallery Image" loading="lazy" />
-              </div>
-            ))}
+            <div class="gallery-column" id="column0"></div>
+            <div class="gallery-column" id="column1"></div>
+            <div class="gallery-column" id="column2"></div>
         </div>
         <!-- 加载更多按钮区域 -->
         <div class="load-more-area" id="loadMoreArea">
@@ -88,11 +86,51 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     var batchSize = 80;
-    var loadedCount = allImages.length > batchSize ? batchSize : allImages.length;
+    var loadedCount = 0;
     var isLoading = false;
     var loadMoreArea = document.getElementById('loadMoreArea');
     var loadMoreBtn = document.getElementById('loadMoreBtn');
-    var galleryContainer = document.getElementById('galleryContainer');
+    var columns = [
+        document.getElementById('column0'),
+        document.getElementById('column1'),
+        document.getElementById('column2')
+    ];
+
+    function getShortestColumn() {
+        var minIndex = 0;
+        var minHeight = -1;
+        for (var i = 0; i < columns.length; i++) {
+            var h = columns[i].offsetHeight;
+            if (minHeight === -1 || h < minHeight) {
+                minHeight = h;
+                minIndex = i;
+            }
+        }
+        return columns[minIndex];
+    }
+
+    function createCard(imgUrl) {
+        var card = document.createElement('div');
+        card.className = 'card';
+        var img = document.createElement('img');
+        img.src = imgUrl;
+        img.alt = 'Gallery Image';
+        img.setAttribute('loading', 'lazy');
+        card.appendChild(img);
+        return card;
+    }
+
+    function loadBatch(images) {
+        for (var i = 0; i < images.length; i++) {
+            var col = getShortestColumn();
+            col.appendChild(createCard(images[i]));
+        }
+    }
+
+    // 首屏加载
+    var firstBatch = allImages.slice(0, batchSize);
+    loadedCount = firstBatch.length;
+    loadBatch(firstBatch);
 
     if (allImages.length <= batchSize) {
         if (loadMoreArea) loadMoreArea.style.display = 'none';
@@ -120,19 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        var fragment = document.createDocumentFragment();
-        nextBatch.forEach(function(imgUrl) {
-            var card = document.createElement('div');
-            card.className = 'card';
-            var img = document.createElement('img');
-            img.src = imgUrl;
-            img.alt = 'Gallery Image';
-            img.setAttribute('loading', 'lazy');
-            card.appendChild(img);
-            fragment.appendChild(card);
-        });
-        galleryContainer.appendChild(fragment);
-        
+        loadBatch(nextBatch);
         loadedCount += nextBatch.length;
         isLoading = false;
         
