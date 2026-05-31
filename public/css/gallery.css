@@ -133,6 +133,38 @@ body{
     box-shadow:0 6px 16px rgba(0,0,0,.06);
 }
 
+/* 加载更多按钮容器 */
+.load-more-wrap{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:24px;
+}
+
+/* 加载更多按钮 */
+.load-more-btn{
+    padding:16px 48px;
+    border:none;
+    border-radius:24px;
+    background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color:white;
+    font-size:18px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 8px 24px rgba(99,102,241,.25);
+    transition:all .3s ease;
+    letter-spacing:1px;
+}
+
+.load-more-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 32px rgba(99,102,241,.35);
+}
+
+.load-more-btn:active{
+    transform:translateY(-1px);
+}
+
 /* ================= 响应式设计 ================= */
 
 @media(max-width:1600px){
