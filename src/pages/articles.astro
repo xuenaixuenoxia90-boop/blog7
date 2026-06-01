@@ -57,7 +57,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             })}
         </div>
         <div class="pagination" id="pagination">
-            <button class="page-btn prev-btn" id="prevBtn">
+            <button class="page-btn prev-btn" id="prevBtn" onclick="window.prevPage()">
                 <span>‹</span> 上一页
             </button>
             <span class="page-label">第</span>
@@ -67,7 +67,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
                 ))}
             </select>
             <span class="page-label">页 / 共 {totalPages} 页</span>
-            <button class="page-btn next-btn" id="nextBtn">
+            <button class="page-btn next-btn" id="nextBtn" onclick="window.nextPage()">
                 下一页 <span>›</span>
             </button>
         </div>
@@ -143,6 +143,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     }
     
     window.switchToPage = function(pageNum) {
+        if (pageNum < 1 || pageNum > totalPages) return;
         currentPage = pageNum;
         updatePageSelect(pageNum);
         updateNavButtons(pageNum);
@@ -186,6 +187,18 @@ const firstPagePosts = posts.slice(0, postsPerPage);
         if (nextBtn) nextBtn.disabled = pageNum >= totalPages;
     }
     
+    window.prevPage = function() {
+        if (currentPage > 1) {
+            window.switchToPage(currentPage - 1);
+        }
+    };
+    
+    window.nextPage = function() {
+        if (currentPage < totalPages) {
+            window.switchToPage(currentPage + 1);
+        }
+    };
+    
     document.addEventListener('DOMContentLoaded', function() {
         var select = document.getElementById('pageSelect');
         if (select) {
@@ -195,23 +208,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             });
         }
         
-        var prevBtn = document.getElementById('prevBtn');
-        if (prevBtn) {
-            prevBtn.addEventListener('click', function() {
-                if (currentPage > 1) {
-                    window.switchToPage(currentPage - 1);
-                }
-            });
-        }
-        
-        var nextBtn = document.getElementById('nextBtn');
-        if (nextBtn) {
-            nextBtn.addEventListener('click', function() {
-                if (currentPage < totalPages) {
-                    window.switchToPage(currentPage + 1);
-                }
-            });
-        }
+        updateNavButtons(1);
     });
 })();
 
