@@ -95,18 +95,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('column1'),
         document.getElementById('column2')
     ];
+    var colIndex = 0;
 
-    function getShortestColumn() {
-        var minIndex = 0;
-        var minHeight = -1;
-        for (var i = 0; i < columns.length; i++) {
-            var h = columns[i].offsetHeight;
-            if (minHeight === -1 || h < minHeight) {
-                minHeight = h;
-                minIndex = i;
-            }
-        }
-        return columns[minIndex];
+    function getNextColumn() {
+        colIndex = (colIndex + 1) % columns.length;
+        return columns[colIndex];
     }
 
     function createCard(imgUrl) {
@@ -122,12 +115,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function loadBatch(images) {
         for (var i = 0; i < images.length; i++) {
-            var col = getShortestColumn();
+            var col = getNextColumn();
             col.appendChild(createCard(images[i]));
         }
     }
 
-    // 首屏加载
     var firstBatch = allImages.slice(0, batchSize);
     loadedCount = firstBatch.length;
     loadBatch(firstBatch);
