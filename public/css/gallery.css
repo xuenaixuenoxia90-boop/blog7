@@ -91,12 +91,14 @@ body{
     display:flex;
     gap:24px;
     margin-bottom:40px;
+    width:100%;
 }
 
 .gallery-column{
     flex:1;
     display:flex;
     flex-direction:column;
+    min-width:0;
 }
 
 /* 加载更多按钮区域 */
