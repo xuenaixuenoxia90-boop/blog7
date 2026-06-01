@@ -260,6 +260,46 @@ body{
     color:#333;
 }
 
+.page-btn{
+    height:36px;
+    padding:0 18px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color:white;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    box-shadow:0 4px 15px rgba(102,126,234,0.3);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    letter-spacing:1px;
+}
+
+.page-btn span{
+    font-size:20px;
+    font-weight:400;
+    line-height:1;
+}
+
+.page-btn:hover:not(:disabled){
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(102,126,234,0.4);
+}
+
+.page-btn:active:not(:disabled){
+    transform:scale(0.97);
+}
+
+.page-btn:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
 /* ================= 响应式设计 ================= */
 
 @media screen and (max-width: 1200px) {
