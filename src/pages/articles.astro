@@ -57,7 +57,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             })}
         </div>
         <div class="pagination" id="pagination">
-            <button class="page-btn prev-btn" id="prevBtn" onclick="window.prevPage()">
+            <button class="page-btn prev-btn" id="prevBtn">
                 <span>‹</span> 上一页
             </button>
             <span class="page-label">第</span>
@@ -67,7 +67,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
                 ))}
             </select>
             <span class="page-label">页 / 共 {totalPages} 页</span>
-            <button class="page-btn next-btn" id="nextBtn" onclick="window.nextPage()">
+            <button class="page-btn next-btn" id="nextBtn">
                 下一页 <span>›</span>
             </button>
         </div>
@@ -96,6 +96,9 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     var pageCache = { 1: [] };
     var currentPage = 1;
     var totalPages = 1;
+    var prevBtn = null;
+    var nextBtn = null;
+    var pageSelect = null;
     
     try {
         var totalPagesEl = document.getElementById('total-pages');
@@ -103,15 +106,6 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             totalPages = parseInt(totalPagesEl.textContent);
         }
     } catch(e) {}
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        var firstPageCards = document.querySelectorAll('#articleGrid .card');
-        var cachedCards = [];
-        for (var i = 0; i < firstPageCards.length; i++) {
-            cachedCards.push(firstPageCards[i]);
-        }
-        pageCache[1] = cachedCards;
-    });
     
     function renderCards(posts) {
         var grid = document.getElementById('articleGrid');
@@ -142,11 +136,18 @@ const firstPagePosts = posts.slice(0, postsPerPage);
         }
     }
     
+    function updateUI(pageNum) {
+        if (pageSelect) {
+            pageSelect.value = String(pageNum);
+        }
+        if (prevBtn) prevBtn.disabled = (pageNum <= 1);
+        if (nextBtn) nextBtn.disabled = (pageNum >= totalPages);
+    }
+    
     window.switchToPage = function(pageNum) {
         if (pageNum < 1 || pageNum > totalPages) return;
         currentPage = pageNum;
-        updatePageSelect(pageNum);
-        updateNavButtons(pageNum);
+        updateUI(pageNum);
         
         if (pageCache[pageNum]) {
             var grid = document.getElementById('articleGrid');
@@ -173,42 +174,40 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             .catch(function() {});
     };
     
-    function updatePageSelect(pageNum) {
-        var select = document.getElementById('pageSelect');
-        if (select) {
-            select.value = String(pageNum);
-        }
-    }
-    
-    function updateNavButtons(pageNum) {
-        var prevBtn = document.getElementById('prevBtn');
-        var nextBtn = document.getElementById('nextBtn');
-        if (prevBtn) prevBtn.disabled = pageNum <= 1;
-        if (nextBtn) nextBtn.disabled = pageNum >= totalPages;
-    }
-    
-    window.prevPage = function() {
-        if (currentPage > 1) {
-            window.switchToPage(currentPage - 1);
-        }
-    };
-    
-    window.nextPage = function() {
-        if (currentPage < totalPages) {
-            window.switchToPage(currentPage + 1);
-        }
-    };
-    
     document.addEventListener('DOMContentLoaded', function() {
-        var select = document.getElementById('pageSelect');
-        if (select) {
-            select.addEventListener('change', function() {
+        prevBtn = document.getElementById('prevBtn');
+        nextBtn = document.getElementById('nextBtn');
+        pageSelect = document.getElementById('pageSelect');
+        
+        var firstPageCards = document.querySelectorAll('#articleGrid .card');
+        var cachedCards = [];
+        for (var i = 0; i < firstPageCards.length; i++) {
+            cachedCards.push(firstPageCards[i]);
+        }
+        pageCache[1] = cachedCards;
+        
+        updateUI(1);
+        
+        if (pageSelect) {
+            pageSelect.addEventListener('change', function() {
                 var pageNum = parseInt(this.value);
                 window.switchToPage(pageNum);
             });
         }
         
-        updateNavButtons(1);
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.switchToPage(currentPage - 1);
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.switchToPage(currentPage + 1);
+            });
+        }
     });
 })();
 
