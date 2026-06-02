@@ -72,7 +72,8 @@ body::before{
 /* logo */
 .logo-wrap{
     display:flex;
-    flex-direction:column;
+    align-items:center;
+    gap:16px;
 }
 
 .logo{
@@ -80,12 +81,13 @@ body::before{
     font-weight:900;
     line-height:1;
     letter-spacing:2px;
+    white-space:nowrap;
 }
 
 .desc{
-    margin-top:10px;
     font-size:22px;
     color:rgba(255,255,255,.82);
+    white-space:nowrap;
 }
 
 /* 右边 */
