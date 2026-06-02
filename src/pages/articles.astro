@@ -8,6 +8,24 @@ const posts = [...allPosts].sort((a, b) => {
   const slugB = b.data.slug || b.slug;
   return slugA.localeCompare(slugB);
 });
+
+const picturesCollection = await getCollection('pictures');
+const picturesBody = picturesCollection[0]?.body || '';
+const imageRegex = /!\[img\]\(([^)]+)\)/g;
+const pictureUrls = [];
+let match;
+while ((match = imageRegex.exec(picturesBody)) !== null) {
+  pictureUrls.push(match[1]);
+}
+
+function getRandomPicture(slug) {
+  if (pictureUrls.length === 0) {
+    return `https://picsum.photos/300/200?${slug}`;
+  }
+  const index = slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % pictureUrls.length;
+  return pictureUrls[index];
+}
+
 const postsPerPage = 9;
 const totalPages = Math.ceil(posts.length / postsPerPage);
 const firstPagePosts = posts.slice(0, postsPerPage);
@@ -46,11 +64,11 @@ const firstPagePosts = posts.slice(0, postsPerPage);
         <div class="article-grid" id="articleGrid">
             {firstPagePosts.map((post) => {
               const title = post.data.title || post.slug;
-              const cover = post.data.cover || '';
+              const cover = post.data.cover || getRandomPicture(post.data.slug || post.slug);
               const urlSlug = post.data.slug || post.slug;
               return (
                 <div class="card" data-slug={urlSlug} onclick="navigateTo('/article/' + this.dataset.slug)">
-                  <img src={cover || `https://picsum.photos/300/200?${urlSlug}`} alt={title} />
+                  <img src={cover} alt={title} />
                   <h3>{title}</h3>
                 </div>
               );
@@ -91,6 +109,9 @@ const firstPagePosts = posts.slice(0, postsPerPage);
 <!-- 总页数数据 -->
 <script id="total-pages" type="application/json">{totalPages}</script>
 
+<!-- 图片列表数据 -->
+<script id="picture-urls" type="application/json">{JSON.stringify(pictureUrls)}</script>
+
 <script is:inline>
 (function() {
     var pageCache = { 1: [] };
@@ -99,6 +120,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     var prevBtn = null;
     var nextBtn = null;
     var pageSelect = null;
+    var pictureUrls = [];
     
     try {
         var totalPagesEl = document.getElementById('total-pages');
@@ -106,6 +128,25 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             totalPages = parseInt(totalPagesEl.textContent);
         }
     } catch(e) {}
+    
+    try {
+        var pictureUrlsEl = document.getElementById('picture-urls');
+        if (pictureUrlsEl) {
+            pictureUrls = JSON.parse(pictureUrlsEl.textContent);
+        }
+    } catch(e) {}
+    
+    function getRandomPicture(slug) {
+        if (pictureUrls.length === 0) {
+            return 'https://picsum.photos/300/200?' + slug;
+        }
+        var index = 0;
+        for (var i = 0; i < slug.length; i++) {
+            index += slug.charCodeAt(i);
+        }
+        index = index % pictureUrls.length;
+        return pictureUrls[index];
+    }
     
     function renderCards(posts) {
         var grid = document.getElementById('articleGrid');
@@ -117,7 +158,7 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             card.setAttribute('data-slug', post.urlSlug);
             
             var img = document.createElement('img');
-            img.src = post.cover || ('https://picsum.photos/300/200?' + post.urlSlug);
+            img.src = post.cover || getRandomPicture(post.urlSlug);
             img.alt = post.title;
             
             var h3 = document.createElement('h3');
