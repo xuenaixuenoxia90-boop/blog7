@@ -1,23 +1,20 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import videosData from '../../content/video/videos.json';
 
-export async function getStaticPaths() {
-  const videos = await getCollection('video');
-  return videos.map((video) => ({
+export function getStaticPaths() {
+  return videosData.map((video) => ({
     params: { slug: video.id },
-    props: { video },
+    props: video,
   }));
 }
 
-const { video } = Astro.props;
+const video = Astro.props;
 ---
 
-<BaseLayout title={`${video.data.title} - 拉杆吧`} css={['video.css']}>
+<BaseLayout title={`${video.title} - 拉杆吧`} css={['video.css']}>
 <div class="page">
-    <!-- 顶部 -->
     <div class="topbar">
-        <!-- 左边 -->
         <div class="left-info">
             <button class="back-btn" onclick="goBackToList('/videos')">← <span data-cn="返回" data-en="Back">返回</span></button>
             <div class="logo-wrap">
@@ -25,9 +22,8 @@ const { video } = Astro.props;
                 <div class="desc" data-cn="唤醒国男的街健梦！" data-en="Wake up your street workout dream!">唤醒国男的街健梦！</div>
             </div>
         </div>
-        <!-- 右边 -->
         <div class="right-area">
-            <div class="video-title">{video.data.title}</div>
+            <div class="video-title">{video.title}</div>
             <div class="language-box">
                 <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
                 <div class="language-dropdown">
@@ -37,13 +33,12 @@ const { video } = Astro.props;
             </div>
         </div>
     </div>
-    <!-- 中央视频播放器 -->
     <div class="video-section">
         <div class="video-box">
-            <div class="video-container" id="videoBox" data-video={video.data.video_url || ''}>
-                {video.data.video_url ? (
+            <div class="video-container" id="videoBox" data-video={video.video_url || ''}>
+                {video.video_url ? (
                   <video
-                    src={video.data.video_url}
+                    src={video.video_url}
                     controls
                     preload="metadata"
                     autoplay
