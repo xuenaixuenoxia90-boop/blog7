@@ -22,15 +22,4 @@ const tool = defineCollection({
   }),
 });
 
-const video = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/video' }),
-  schema: z.object({
-    title: z.string().default(''),
-    slug: z.string().default(''),
-    description: z.string().optional(),
-    cover: z.string().optional(),
-    video_url: z.string().optional(),
-  }),
-});
-
-export const collections = { blog, tool, video };
+export const collections = { blog, tool };
