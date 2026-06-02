@@ -8,8 +8,11 @@ description: 安卓逆向与抓包环境搭建，适用于 Web 与 APP 安全测
 
 下面两个软件可以帮助你轻松绕过对于设备指纹的403封锁，让挖洞更开心！
 
+本软件均需要root手机，原理是通过root刷入实现对应目标软件的指纹替换。
 
 
-app-debug:https://bloggogo.xyz/%E8%BF%9C%E6%8E%A7/app-debug.apk
 
-FakerUnlocker:https://bloggogo.xyz/%E5%AE%89%E5%8D%93%E6%8A%93%E5%8C%85/FakerUnlocker-v1.0-release.apk
+app-debug:https://hsy520.ccwu.cc/%E8%BF%9C%E6%8E%A7/app-debug.apk
+
+FakerUnlocker:https://hsy520.ccwu.cc/%E5%AE%89%E5%8D%93%E6%8A%93%E5%8C%85/FakerUnlocker-v1.0-release.apk
+
