@@ -198,6 +198,51 @@ body{
     color:#666;
 }
 
+.download-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+}
+
+.download-btn{
+    padding:6px 12px;
+    border-radius:8px;
+    background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color:white;
+    font-size:12px;
+    font-weight:600;
+    text-decoration:none;
+    transition:all 0.3s ease;
+    box-shadow:0 2px 8px rgba(102,126,234,0.3);
+}
+
+.download-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 12px rgba(102,126,234,0.4);
+}
+
+.card-overlay{
+    position:absolute;
+    inset:0;
+    cursor:pointer;
+    z-index:1;
+}
+
+.card-content{
+    position:relative;
+    z-index:2;
+}
+
+.card img{
+    position:relative;
+    z-index:2;
+}
+
+.card{
+    position:relative;
+}
+
 /* 分页 */
 .pagination{
     margin-top:16px;

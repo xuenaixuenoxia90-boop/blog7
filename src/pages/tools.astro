@@ -3,11 +3,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 const allTools = await getCollection('tool');
-const tools = [...allTools].sort((a, b) => {
+
+function parseDownloadLinks(body) {
+  const links = [];
+  const regex = /^(\S+):(https?:\/\/\S+)$/gm;
+  let match;
+  while ((match = regex.exec(body)) !== null) {
+    links.push({
+      name: match[1],
+      url: match[2]
+    });
+  }
+  return links;
+}
+
+const tools = [...allTools].map(t => ({
+  ...t,
+  downloads: parseDownloadLinks(t.body || '')
+})).sort((a, b) => {
   const slugA = a.data.slug || a.slug;
   const slugB = b.data.slug || b.slug;
   return slugA.localeCompare(slugB);
 });
+
 const toolsPerPage = 9;
 const totalPages = Math.ceil(tools.length / toolsPerPage);
 const firstPageTools = tools.slice(0, toolsPerPage);
@@ -46,13 +64,24 @@ const firstPageTools = tools.slice(0, toolsPerPage);
               const desc = tool.data.description || '';
               const cover = tool.data.cover || '';
               const urlSlug = tool.data.slug || tool.slug;
+              const downloads = tool.downloads || [];
               return (
-                <div class="card" data-slug={urlSlug} data-title={title.toLowerCase()} data-desc={desc.toLowerCase()} onclick="navigateTo('/tool/' + this.dataset.slug)">
+                <div class="card" data-slug={urlSlug} data-title={title.toLowerCase()} data-desc={desc.toLowerCase()}>
                   <img src={cover || `https://picsum.photos/400/300?${urlSlug}`} alt={title} />
                   <div class="card-content">
                     <h3>{title}</h3>
                     <p>{desc}</p>
+                    {downloads.length > 0 && (
+                      <div class="download-buttons">
+                        {downloads.map((dl, index) => (
+                          <a href={dl.url} target="_blank" rel="noopener noreferrer" class="download-btn" key={index}>
+                            📥 {dl.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                  <div class="card-overlay" onclick="navigateTo('/tool/' + this.parentElement.dataset.slug)"></div>
                 </div>
               );
             })}
@@ -121,14 +150,36 @@ const firstPageTools = tools.slice(0, toolsPerPage);
             
             cardContent.appendChild(h3);
             cardContent.appendChild(p);
+            
+            if (tool.downloads && tool.downloads.length > 0) {
+                var downloadButtons = document.createElement('div');
+                downloadButtons.className = 'download-buttons';
+                
+                for (var j = 0; j < tool.downloads.length; j++) {
+                    var dl = tool.downloads[j];
+                    var dlBtn = document.createElement('a');
+                    dlBtn.href = dl.url;
+                    dlBtn.target = '_blank';
+                    dlBtn.rel = 'noopener noreferrer';
+                    dlBtn.className = 'download-btn';
+                    dlBtn.textContent = '📥 ' + dl.name;
+                    downloadButtons.appendChild(dlBtn);
+                }
+                
+                cardContent.appendChild(downloadButtons);
+            }
+            
             card.appendChild(img);
             card.appendChild(cardContent);
             
+            var overlay = document.createElement('div');
+            overlay.className = 'card-overlay';
             (function(t) {
-                card.addEventListener('click', function() {
+                overlay.addEventListener('click', function() {
                     window.location.href = '/tool/' + t.urlSlug;
                 });
             })(tool);
+            card.appendChild(overlay);
             
             grid.appendChild(card);
         }

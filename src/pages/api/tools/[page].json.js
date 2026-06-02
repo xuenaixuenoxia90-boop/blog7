@@ -7,6 +7,19 @@ const tools = [...allTools].sort((a, b) => {
   return slugA.localeCompare(slugB);
 });
 
+function parseDownloadLinks(body) {
+  const links = [];
+  const regex = /^(\S+):(https?:\/\/\S+)$/gm;
+  let match;
+  while ((match = regex.exec(body)) !== null) {
+    links.push({
+      name: match[1],
+      url: match[2]
+    });
+  }
+  return links;
+}
+
 export async function getStaticPaths() {
   const perPage = 9;
   const totalPages = Math.ceil(tools.length / perPage);
@@ -29,7 +42,8 @@ export async function GET({ params, props }) {
       title: t.data.title || t.slug,
       description: t.data.description || '',
       cover: t.data.cover || '',
-      urlSlug: t.data.slug || t.slug
+      urlSlug: t.data.slug || t.slug,
+      downloads: parseDownloadLinks(t.body || '')
     })),
     page: pageNum,
     totalPages,
