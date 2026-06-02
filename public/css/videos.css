@@ -193,7 +193,7 @@ body{
 }
 
 .video-title{
-    font-size:17px;
+    font-size:14px;
     font-weight:700;
     line-height:1.4;
     color:#222;
@@ -206,7 +206,7 @@ body{
 }
 
 .video-desc{
-    font-size:17px;
+    font-size:13px;
     color:#666;
     line-height:1.6;
 }
@@ -432,12 +432,12 @@ body{
     }
 
     .video-title{
-        font-size:17px;
+        font-size:14px;
         margin-bottom:6px;
     }
 
     .video-desc{
-        font-size:14px;
+        font-size:13px;
         color:#666;
     }
 
