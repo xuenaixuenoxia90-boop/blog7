@@ -16,12 +16,11 @@ while ((match = imageRegex.exec(picturesBody)) !== null) {
   pictureUrls.push(match[1]);
 }
 
-function getRandomPicture(slug) {
+function getPictureByIndex(index) {
   if (pictureUrls.length === 0) {
-    return `https://picsum.photos/300/200?${slug}`;
+    return `https://picsum.photos/300/200?${index}`;
   }
-  const index = slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % pictureUrls.length;
-  return pictureUrls[index];
+  return pictureUrls[index % pictureUrls.length];
 }
 
 export async function getStaticPaths() {
@@ -33,18 +32,19 @@ export async function getStaticPaths() {
     props: {
       pageNum: i + 1,
       pagePosts: posts.slice(i * perPage, (i + 1) * perPage),
+      startIndex: i * perPage,
       totalPages
     }
   }));
 }
 
 export async function GET({ params, props }) {
-  const { pageNum, pagePosts, totalPages } = props;
+  const { pageNum, pagePosts, startIndex, totalPages } = props;
   
   return new Response(JSON.stringify({
-    posts: pagePosts.map(p => ({
+    posts: pagePosts.map((p, localIndex) => ({
       title: p.data.title || p.slug,
-      cover: p.data.cover || getRandomPicture(p.data.slug || p.slug),
+      cover: p.data.cover || getPictureByIndex(startIndex + localIndex),
       urlSlug: p.data.slug || p.slug
     })),
     page: pageNum,
