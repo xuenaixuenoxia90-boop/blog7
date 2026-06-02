@@ -7,6 +7,23 @@ const posts = [...allPosts].sort((a, b) => {
   return slugA.localeCompare(slugB);
 });
 
+const picturesCollection = await getCollection('pictures');
+const picturesBody = picturesCollection[0]?.body || '';
+const imageRegex = /!\[img\]\(([^)]+)\)/g;
+const pictureUrls = [];
+let match;
+while ((match = imageRegex.exec(picturesBody)) !== null) {
+  pictureUrls.push(match[1]);
+}
+
+function getRandomPicture(slug) {
+  if (pictureUrls.length === 0) {
+    return `https://picsum.photos/300/200?${slug}`;
+  }
+  const index = slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % pictureUrls.length;
+  return pictureUrls[index];
+}
+
 export async function getStaticPaths() {
   const perPage = 9;
   const totalPages = Math.ceil(posts.length / perPage);
@@ -27,7 +44,7 @@ export async function GET({ params, props }) {
   return new Response(JSON.stringify({
     posts: pagePosts.map(p => ({
       title: p.data.title || p.slug,
-      cover: p.data.cover || '',
+      cover: p.data.cover || getRandomPicture(p.data.slug || p.slug),
       urlSlug: p.data.slug || p.slug
     })),
     page: pageNum,
