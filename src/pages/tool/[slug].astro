@@ -2,15 +2,31 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
+function parseDownloadLinks(body) {
+  const links = [];
+  const regex = /^(\S+):(https?:\/\/\S+)$/gm;
+  let match;
+  while ((match = regex.exec(body)) !== null) {
+    links.push({
+      name: match[1],
+      url: match[2]
+    });
+  }
+  return links;
+}
+
 export async function getStaticPaths() {
   const tools = await getCollection('tool');
   return tools.map((tool) => ({
     params: { slug: tool.slug },
-    props: { tool },
+    props: { 
+      tool,
+      downloads: parseDownloadLinks(tool.body || '')
+    },
   }));
 }
 
-const { tool } = Astro.props;
+const { tool, downloads } = Astro.props;
 const { Content } = await render(tool);
 ---
 
@@ -43,7 +59,7 @@ const { Content } = await render(tool);
             <!-- 工具展示 -->
             <div class="tools">
                 <div class="tool-card">
-                    <div class="tool-image"><img src={`https://picsum.photos/300/200?${tool.slug}`} /></div>
+                    <div class="tool-image"><img src={tool.data.cover || `https://picsum.photos/300/200?${tool.slug}`} /></div>
                     <div class="tool-name">{tool.data.title}</div>
                 </div>
             </div>
@@ -54,6 +70,19 @@ const { Content } = await render(tool);
                   <Content />
                 </div>
             </div>
+            <!-- 下载区域 -->
+            {downloads.length > 0 && (
+                <div class="download-section">
+                    <h2 data-cn="下载链接" data-en="Download Links">下载链接</h2>
+                    <div class="download-buttons">
+                        {downloads.map((dl, index) => (
+                            <a href={dl.url} target="_blank" rel="noopener noreferrer" class="download-btn" key={index}>
+                                📥 {dl.name}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+            )}
             <div class="bottom-space"></div>
         </div>
     </div>
