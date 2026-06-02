@@ -2,21 +2,22 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 
-function parseDownloadLinks(body) {
-  const links = [];
-  const regex = /^(\S+):(https?:\/\/\S+)$/gm;
-  let match;
-  while ((match = regex.exec(body)) !== null) {
-    links.push({
-      name: match[1],
-      url: match[2]
-    });
-  }
-  return links;
-}
-
 export async function getStaticPaths() {
   const tools = await getCollection('tool');
+  
+  function parseDownloadLinks(body) {
+    const links = [];
+    const regex = /^(\S+):(https?:\/\/\S+)$/gm;
+    let match;
+    while ((match = regex.exec(body)) !== null) {
+      links.push({
+        name: match[1],
+        url: match[2]
+      });
+    }
+    return links;
+  }
+  
   return tools.map((tool) => ({
     params: { slug: tool.slug },
     props: { 
