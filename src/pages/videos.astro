@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import videosData from '../content/video/videos.json';
+
+const videosPerPage = 9;
+const totalPages = Math.ceil(videosData.length / videosPerPage);
+const firstPageVideos = videosData.slice(0, videosPerPage);
 ---
 
 <BaseLayout title="拉杆吧" css={['videos.css']}>
@@ -33,12 +37,12 @@ import videosData from '../content/video/videos.json';
             </div>
         </div>
         <div class="video-wrapper">
-            <div class="video-grid">
-                {videosData.map((video) => {
+            <div class="video-grid" id="videoGrid">
+                {firstPageVideos.map((video) => {
               const title = video.title || video.id;
               const cover = video.cover || '';
               return (
-                <div class="video-card" onclick={`navigateTo('/video/${video.id}')`}>
+                <div class="video-card" data-id={video.id} data-cover={cover} data-title={title} onclick="window.openVideo(this.dataset.id)">
                     <div class="video-cover">
                         <img src={cover || `https://picsum.photos/400/300?${video.id}`} />
                         <div class="play-icon">▶</div>
@@ -51,7 +55,146 @@ import videosData from '../content/video/videos.json';
             })}
             </div>
         </div>
+        <div class="pagination" id="pagination">
+            <button class="page-btn prev-btn" id="prevBtn">
+                <span>‹</span> 上一页
+            </button>
+            <span class="page-label">第</span>
+            <select class="page-select" id="pageSelect">
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <option value={i + 1}>{i + 1}</option>
+                ))}
+            </select>
+            <span class="page-label">页 / 共 {totalPages} 页</span>
+            <button class="page-btn next-btn" id="nextBtn">
+                下一页 <span>›</span>
+            </button>
+        </div>
     </div>
     <div class="side-ad"></div>
 </div>
+
+<!-- 总页数数据 -->
+<script id="total-pages" type="application/json">{totalPages}</script>
+
+<script is:inline>
+(function() {
+    var pageCache = { 1: [] };
+    var currentPage = 1;
+    var totalPages = 1;
+    var prevBtn = null;
+    var nextBtn = null;
+    var pageSelect = null;
+    
+    try {
+        var totalPagesEl = document.getElementById('total-pages');
+        if (totalPagesEl) {
+            totalPages = parseInt(totalPagesEl.textContent);
+        }
+    } catch(e) {}
+    
+    function renderCards(videos) {
+        var grid = document.getElementById('videoGrid');
+        grid.innerHTML = '';
+        for (var i = 0; i < videos.length; i++) {
+            var v = videos[i];
+            var card = document.createElement('div');
+            card.className = 'video-card';
+            card.setAttribute('data-id', v.id);
+            card.setAttribute('data-cover', v.cover || '');
+            card.setAttribute('data-title', v.title);
+            
+            var coverHtml = '<div class="video-cover"><img src="' + (v.cover || ('https://picsum.photos/400/300?' + v.id)) + '" /><div class="play-icon">▶</div></div>';
+            var infoHtml = '<div class="video-info"><div class="video-title">' + v.title + '</div></div>';
+            card.innerHTML = coverHtml + infoHtml;
+            
+            (function(id) {
+                card.addEventListener('click', function() {
+                    window.location.href = '/video/' + id;
+                });
+            })(v.id);
+            
+            grid.appendChild(card);
+        }
+    }
+    
+    function updateUI(pageNum) {
+        if (pageSelect) {
+            pageSelect.value = String(pageNum);
+        }
+        if (prevBtn) prevBtn.disabled = (pageNum <= 1);
+        if (nextBtn) nextBtn.disabled = (pageNum >= totalPages);
+    }
+    
+    window.switchToPage = function(pageNum) {
+        if (pageNum < 1 || pageNum > totalPages) return;
+        currentPage = pageNum;
+        updateUI(pageNum);
+        
+        if (pageCache[pageNum]) {
+            var grid = document.getElementById('videoGrid');
+            grid.innerHTML = '';
+            for (var i = 0; i < pageCache[pageNum].length; i++) {
+                grid.appendChild(pageCache[pageNum][i]);
+            }
+            return;
+        }
+        
+        fetch('/api/videos/' + pageNum + '.json')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                renderCards(data.videos);
+                
+                var grid = document.getElementById('videoGrid');
+                var cards = [];
+                var allCards = grid.querySelectorAll('.video-card');
+                for (var j = 0; j < allCards.length; j++) {
+                    cards.push(allCards[j]);
+                }
+                pageCache[pageNum] = cards;
+            })
+            .catch(function() {});
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        prevBtn = document.getElementById('prevBtn');
+        nextBtn = document.getElementById('nextBtn');
+        pageSelect = document.getElementById('pageSelect');
+        
+        var firstPageCards = document.querySelectorAll('#videoGrid .video-card');
+        var cachedCards = [];
+        for (var i = 0; i < firstPageCards.length; i++) {
+            cachedCards.push(firstPageCards[i]);
+        }
+        pageCache[1] = cachedCards;
+        
+        updateUI(1);
+        
+        if (pageSelect) {
+            pageSelect.addEventListener('change', function() {
+                var pageNum = parseInt(this.value);
+                window.switchToPage(pageNum);
+            });
+        }
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.switchToPage(currentPage - 1);
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.switchToPage(currentPage + 1);
+            });
+        }
+    });
+})();
+
+window.openVideo = function(id) {
+    window.location.href = '/video/' + id;
+};
+</script>
 </BaseLayout>
