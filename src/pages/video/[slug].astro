@@ -1,18 +1,19 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import videosData from '../../content/video/videos.json';
+import { getCollection } from 'astro:content';
 
-export function getStaticPaths() {
-  return videosData.map((video) => ({
+export async function getStaticPaths() {
+  const videos = await getCollection('video');
+  return videos.map((video) => ({
     params: { slug: video.id },
-    props: video,
+    props: { video },
   }));
 }
 
-const video = Astro.props;
+const { video } = Astro.props;
 ---
 
-<BaseLayout title={`${video.title} - 拉杆吧`} css={['video.css']}>
+<BaseLayout title={`${video.data.title} - 拉杆吧`} css={['video.css']}>
 <div class="page">
     <!-- 顶部 -->
     <div class="topbar">
@@ -26,7 +27,7 @@ const video = Astro.props;
         </div>
         <!-- 右边 -->
         <div class="right-area">
-            <div class="video-title">{video.title}</div>
+            <div class="video-title">{video.data.title}</div>
             <div class="language-box">
                 <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
                 <div class="language-dropdown">
@@ -39,10 +40,10 @@ const video = Astro.props;
     <!-- 中央视频播放器 -->
     <div class="video-section">
         <div class="video-box">
-            <div class="video-container" id="videoBox" data-video={video.video_url || ''}>
-                {video.video_url ? (
+            <div class="video-container" id="videoBox" data-video={video.data.video_url || ''}>
+                {video.data.video_url ? (
                   <video
-                    src={video.video_url}
+                    src={video.data.video_url}
                     controls
                     preload="metadata"
                     autoplay
