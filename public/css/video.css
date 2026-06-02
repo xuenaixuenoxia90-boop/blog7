@@ -168,7 +168,7 @@ body::before{
 /* 视频标题 */
 .video-title{
     margin-top:8px;
-    font-size:52px;
+    font-size:28px;
     font-weight:900;
     white-space:nowrap;
     text-align:right;
@@ -264,7 +264,7 @@ body::before{
         font-size:54px;
     }
     .video-title{
-        font-size:40px;
+        font-size:24px;
     }
     .video-box{
         width:85%;
@@ -273,7 +273,7 @@ body::before{
 
 @media(max-width:1200px){
     .video-title{
-        font-size:32px;
+        font-size:20px;
     }
     .video-box{
         width:90%;
