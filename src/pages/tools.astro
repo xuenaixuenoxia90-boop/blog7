@@ -2,28 +2,32 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const tools = await getCollection('tool');
+const allTools = await getCollection('tool');
+const tools = [...allTools].sort((a, b) => {
+  const slugA = a.data.slug || a.slug;
+  const slugB = b.data.slug || b.slug;
+  return slugA.localeCompare(slugB);
+});
+const toolsPerPage = 9;
+const totalPages = Math.ceil(tools.length / toolsPerPage);
+const firstPageTools = tools.slice(0, toolsPerPage);
 ---
 
 <BaseLayout title="工具分享" css={['tools.css']}>
-<div class="container">
-    <!-- 左侧留空 -->
+<div class="container" id="mainContainer">
     <div class="side-space"></div>
-    <!-- 主体 -->
-    <div class="main">
-        <!-- 顶部 -->
+    <div class="main" id="mainContent">
         <div class="top-bar">
-            <!-- 返回 -->
-            <button class="back-btn" onclick="goBackToHome()">
-                <span>←</span>
-                <span data-cn="返回" data-en="Back">返回</span>
-            </button>
-            <!-- 标题 -->
-            <div class="header">
-                <h1 data-cn="工具分享" data-en="Tool Share">工具分享</h1>
-                <p data-cn="打造专属于你的最强挖洞环境！" data-en="Build your own strongest hacking environment!">打造专属于你的最强挖洞环境！</p>
+            <div class="top-left">
+                <button class="back-btn" onclick="goBackToHome()">
+                    <span class="arrow">←</span>
+                    <span data-cn="返回" data-en="Back">返回</span>
+                </button>
+                <div class="header">
+                    <h1 data-cn="工具分享" data-en="Tool Share">工具分享</h1>
+                    <p data-cn="打造专属于你的最强挖洞环境！" data-en="Build your own strongest hacking environment!">打造专属于你的最强挖洞环境！</p>
+                </div>
             </div>
-            <!-- 语言切换 -->
             <div class="language-box">
                 <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
                 <div class="language-dropdown">
@@ -32,20 +36,19 @@ const tools = await getCollection('tool');
                 </div>
             </div>
         </div>
-        <!-- 搜索 -->
         <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="请输入关键字..."/>
-            <button class="search-btn" data-cn=" 搜索" data-en="🔍 Search">🔍 搜索</button>
+            <input type="text" id="searchInput" placeholder="搜索工具标题..." />
+            <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search"> 🔍 搜索</button>
         </div>
-        <!-- 工具列表 -->
-        <div class="tool-grid">
-            {tools.map((tool) => {
+        <div class="tool-grid" id="toolGrid">
+            {firstPageTools.map((tool) => {
               const title = tool.data.title || tool.slug;
               const desc = tool.data.description || '';
               const cover = tool.data.cover || '';
+              const urlSlug = tool.data.slug || tool.slug;
               return (
-                <div class="card" onclick={`navigateTo('/tool/${tool.slug}')`}>
-                  <img src={cover || `https://picsum.photos/400/300?${tool.slug}`} />
+                <div class="card" data-slug={urlSlug} data-title={title.toLowerCase()} data-desc={desc.toLowerCase()} onclick="navigateTo('/tool/' + this.dataset.slug)">
+                  <img src={cover || `https://picsum.photos/400/300?${urlSlug}`} alt={title} />
                   <div class="card-content">
                     <h3>{title}</h3>
                     <p>{desc}</p>
@@ -54,15 +57,188 @@ const tools = await getCollection('tool');
               );
             })}
         </div>
-        <!-- 分页 -->
-        <div class="pagination">
-            <button class="page">&lt;</button>
-            <button class="page active">1</button>
-            <button class="page">2</button>
-            <button class="page">&gt;</button>
+        <div class="pagination" id="pagination">
+            <button class="page-btn prev-btn" id="prevBtn">
+                <span>‹</span> 上一页
+            </button>
+            <span class="page-label">第</span>
+            <select class="page-select" id="pageSelect">
+                {Array.from({ length: totalPages }, (_, i) => (
+                    <option value={i + 1}>{i + 1}</option>
+                ))}
+            </select>
+            <span class="page-label">页 / 共 {totalPages} 页</span>
+            <button class="page-btn next-btn" id="nextBtn">
+                下一页 <span>›</span>
+            </button>
         </div>
     </div>
-    <!-- 右侧留空 -->
     <div class="side-space"></div>
 </div>
+
+<!-- 总页数数据 -->
+<script id="total-pages" type="application/json">{totalPages}</script>
+
+<script is:inline>
+(function() {
+    var pageCache = { 1: [] };
+    var currentPage = 1;
+    var totalPages = 1;
+    var prevBtn = null;
+    var nextBtn = null;
+    var pageSelect = null;
+    
+    try {
+        var totalPagesEl = document.getElementById('total-pages');
+        if (totalPagesEl) {
+            totalPages = parseInt(totalPagesEl.textContent);
+        }
+    } catch(e) {}
+    
+    function renderCards(tools) {
+        var grid = document.getElementById('toolGrid');
+        grid.innerHTML = '';
+        for (var i = 0; i < tools.length; i++) {
+            var tool = tools[i];
+            var card = document.createElement('div');
+            card.className = 'card';
+            card.setAttribute('data-slug', tool.urlSlug);
+            card.setAttribute('data-title', tool.title.toLowerCase());
+            card.setAttribute('data-desc', tool.description.toLowerCase());
+            
+            var img = document.createElement('img');
+            img.src = tool.cover || ('https://picsum.photos/400/300?' + tool.urlSlug);
+            img.alt = tool.title;
+            
+            var cardContent = document.createElement('div');
+            cardContent.className = 'card-content';
+            
+            var h3 = document.createElement('h3');
+            h3.textContent = tool.title;
+            
+            var p = document.createElement('p');
+            p.textContent = tool.description;
+            
+            cardContent.appendChild(h3);
+            cardContent.appendChild(p);
+            card.appendChild(img);
+            card.appendChild(cardContent);
+            
+            (function(t) {
+                card.addEventListener('click', function() {
+                    window.location.href = '/tool/' + t.urlSlug;
+                });
+            })(tool);
+            
+            grid.appendChild(card);
+        }
+    }
+    
+    function updateUI(pageNum) {
+        if (pageSelect) {
+            pageSelect.value = String(pageNum);
+        }
+        if (prevBtn) prevBtn.disabled = (pageNum <= 1);
+        if (nextBtn) nextBtn.disabled = (pageNum >= totalPages);
+    }
+    
+    window.switchToPage = function(pageNum) {
+        if (pageNum < 1 || pageNum > totalPages) return;
+        currentPage = pageNum;
+        updateUI(pageNum);
+        
+        if (pageCache[pageNum]) {
+            var grid = document.getElementById('toolGrid');
+            grid.innerHTML = '';
+            for (var i = 0; i < pageCache[pageNum].length; i++) {
+                grid.appendChild(pageCache[pageNum][i]);
+            }
+            return;
+        }
+        
+        fetch('/api/tools/' + pageNum + '.json')
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                renderCards(data.tools);
+                
+                var grid = document.getElementById('toolGrid');
+                var cards = [];
+                var allCards = grid.querySelectorAll('.card');
+                for (var j = 0; j < allCards.length; j++) {
+                    cards.push(allCards[j]);
+                }
+                pageCache[pageNum] = cards;
+            })
+            .catch(function() {});
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        prevBtn = document.getElementById('prevBtn');
+        nextBtn = document.getElementById('nextBtn');
+        pageSelect = document.getElementById('pageSelect');
+        
+        var firstPageCards = document.querySelectorAll('#toolGrid .card');
+        var cachedCards = [];
+        for (var i = 0; i < firstPageCards.length; i++) {
+            cachedCards.push(firstPageCards[i]);
+        }
+        pageCache[1] = cachedCards;
+        
+        updateUI(1);
+        
+        if (pageSelect) {
+            pageSelect.addEventListener('change', function() {
+                var pageNum = parseInt(this.value);
+                window.switchToPage(pageNum);
+            });
+        }
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.switchToPage(currentPage - 1);
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.switchToPage(currentPage + 1);
+            });
+        }
+    });
+})();
+
+var searchInput = document.getElementById('searchInput');
+var searchBtn = document.querySelector('.search-btn');
+
+function performSearch() {
+    var query = searchInput.value.trim().toLowerCase();
+    var cards = document.querySelectorAll('#toolGrid .card');
+    
+    for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var title = card.getAttribute('data-title') || '';
+        var desc = card.getAttribute('data-desc') || '';
+        
+        if (query === '' || title.indexOf(query) !== -1 || desc.indexOf(query) !== -1) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    }
+}
+
+if (searchBtn) {
+    searchBtn.addEventListener('click', performSearch);
+}
+
+if (searchInput) {
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+}
+</script>
 </BaseLayout>
