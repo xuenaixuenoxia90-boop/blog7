@@ -5,24 +5,18 @@ import videosData from '../content/video/videos.json';
 
 <BaseLayout title="拉杆吧" css={['videos.css']}>
 <div class="page">
-    <!-- 左广告 -->
     <div class="side-ad"></div>
-    <!-- 中间内容 -->
     <div class="main">
-        <!-- 顶部 -->
         <div class="header">
             <div class="top-bar">
-                <!-- 返回 -->
                 <button class="back-btn" onclick="goBackToHome()">
                     ←
                     <span data-cn="返回" data-en="Back">返回</span>
                 </button>
-                <!-- 标题 -->
                 <div class="title-box">
                     <div class="title" data-cn="拉杆吧" data-en="SWUB Zone">拉杆吧</div>
                     <div class="sub-title" data-cn="唤醒国男的街健梦！" data-en="Wake up your street workout dream!">唤醒国男的街健梦！</div>
                 </div>
-                <!-- 语言切换 -->
                 <div class="language-box">
                     <button class="language-btn" id="currentLang"><span class="lang-icon">🌐</span><span class="lang-text">简体中文</span></button>
                     <div class="language-dropdown">
@@ -31,7 +25,6 @@ import videosData from '../content/video/videos.json';
                     </div>
                 </div>
             </div>
-            <!-- 搜索 -->
             <div class="search-row">
                 <div class="search-box">
                     <input type="text" id="searchInput" placeholder="搜索视频标题..." />
@@ -39,7 +32,6 @@ import videosData from '../content/video/videos.json';
                 <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search">🔍 搜索</button>
             </div>
         </div>
-        <!-- 视频列表 -->
         <div class="video-wrapper">
             <div class="video-grid">
                 {videosData.map((video) => {
@@ -60,7 +52,6 @@ import videosData from '../content/video/videos.json';
             </div>
         </div>
     </div>
-    <!-- 右广告 -->
     <div class="side-ad"></div>
 </div>
 </BaseLayout>
