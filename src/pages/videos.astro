@@ -1,8 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
-
-const videos = await getCollection('video');
+import videosData from '../content/video/videos.json';
 ---
 
 <BaseLayout title="拉杆吧" css={['videos.css']}>
@@ -44,19 +42,17 @@ const videos = await getCollection('video');
         <!-- 视频列表 -->
         <div class="video-wrapper">
             <div class="video-grid">
-                {videos.map((video) => {
-              const title = video.data.title || video.slug;
-              const desc = video.data.description || '';
-              const cover = video.data.cover || '';
+                {videosData.map((video) => {
+              const title = video.title || video.id;
+              const cover = video.cover || '';
               return (
-                <div class="video-card" onclick={`navigateTo('/video/${video.slug}')`}>
+                <div class="video-card" onclick={`navigateTo('/video/${video.id}')`}>
                     <div class="video-cover">
-                        <img src={cover || `https://picsum.photos/400/300?${video.slug}`} />
+                        <img src={cover || `https://picsum.photos/400/300?${video.id}`} />
                         <div class="play-icon">▶</div>
                     </div>
                     <div class="video-info">
                         <div class="video-title">{title}</div>
-                        <div class="video-desc">{desc}</div>
                     </div>
                 </div>
               );
