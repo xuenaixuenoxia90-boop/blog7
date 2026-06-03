@@ -4,33 +4,14 @@ import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  const sortedPosts = [...posts].sort((a, b) => {
-    const slugA = a.data.slug || a.slug;
-    const slugB = b.data.slug || b.slug;
-    return slugA.localeCompare(slugB);
-  });
-
-  return sortedPosts.map((post, index) => {
-    const prevPost = index > 0 ? sortedPosts[index - 1] : null;
-    const nextPost = index < sortedPosts.length - 1 ? sortedPosts[index + 1] : null;
-    return {
-      params: { slug: post.data.slug || post.slug },
-      props: { 
-        post,
-        prevPost,
-        nextPost
-      },
-    };
-  });
+  return posts.map((post) => ({
+    params: { slug: post.data.slug || post.slug },
+    props: { post },
+  }));
 }
 
-const { post, prevPost, nextPost } = Astro.props;
+const { post } = Astro.props;
 const { Content } = await render(post);
-
-const prevSlug = prevPost ? (prevPost.data.slug || prevPost.slug) : null;
-const prevTitle = prevPost ? (prevPost.data.title || prevPost.slug) : null;
-const nextSlug = nextPost ? (nextPost.data.slug || nextPost.slug) : null;
-const nextTitle = nextPost ? (nextPost.data.title || nextPost.slug) : null;
 ---
 
 <BaseLayout title={`${post.data.title} - 挖洞吧`} css={['article.css']}>
@@ -67,26 +48,6 @@ const nextTitle = nextPost ? (nextPost.data.title || nextPost.slug) : null;
         </div>
         <div class="footer-bar">
             <button class="footer-btn page-btn" onclick="goBackToList('/articles')" data-cn="← 返回列表" data-en="← Back to List">← 返回列表</button>
-            {prevSlug ? (
-                <button class="footer-btn page-btn prev-btn" data-slug="{prevSlug}" onclick="navigateToArticle(this)">
-                    <span>‹</span> <span data-cn="上一篇" data-en="Previous">上一篇</span>
-                    <span class="post-title">{prevTitle}</span>
-                </button>
-            ) : (
-                <button class="footer-btn page-btn disabled" disabled>
-                    <span>‹</span> <span data-cn="上一篇" data-en="Previous">上一篇</span>
-                </button>
-            )}
-            {nextSlug ? (
-                <button class="footer-btn page-btn next-btn" data-slug="{nextSlug}" onclick="navigateToArticle(this)">
-                    <span data-cn="下一篇" data-en="Next">下一篇</span> <span>›</span>
-                    <span class="post-title">{nextTitle}</span>
-                </button>
-            ) : (
-                <button class="footer-btn page-btn disabled" disabled>
-                    <span data-cn="下一篇" data-en="Next">下一篇</span> <span>›</span>
-                </button>
-            )}
         </div>
     </div>
 </div>
@@ -97,17 +58,6 @@ const nextTitle = nextPost ? (nextPost.data.title || nextPost.slug) : null;
 </div>
 
 <script>
-function navigateTo(url) {
-    window.location.href = url;
-}
-
-function navigateToArticle(btn) {
-    var slug = btn.getAttribute('data-slug');
-    if (slug) {
-        window.location.href = '/article/' + slug;
-    }
-}
-
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
