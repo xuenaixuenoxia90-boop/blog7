@@ -28,12 +28,12 @@ function getPictureByIndex(index) {
 const postsPerPage = 9;
 const totalPages = Math.ceil(posts.length / postsPerPage);
 const firstPagePosts = posts.slice(0, postsPerPage);
+const isReturning = true;
 ---
 
 <BaseLayout title="挖洞吧" css={['articles.css']}>
 <div class="container" id="mainContainer">
     <div class="side-space"></div>
-    <!-- 主内容默认隐藏，点击确认后显示 -->
     <div class="main" id="mainContent" style="display: none;">
         <div class="top-bar">
             <div class="top-left">
@@ -92,10 +92,10 @@ const firstPagePosts = posts.slice(0, postsPerPage);
     <div class="side-space"></div>
 </div>
 
-<!-- 警告框 - 默认直接显示 -->
-<div class="warning-overlay" id="warningOverlay" style="opacity: 1; visibility: visible;">
-    <div class="warning-box" style="transform: scale(1);">
-        <div class="warning-icon">⚠️</div>
+<!-- 警告框 -->
+<div class="warning-overlay" id="warningOverlay">
+    <div class="warning-box">
+        <div class="warning-icon">️</div>
         <div class="warning-title">警告</div>
         <div class="warning-text">公开漏洞报告分享平台收录的所有漏洞均已修复，仅用于网络安全学习，严禁用于任何非法用途！</div>
         <div class="warning-btns">
@@ -123,6 +123,20 @@ const firstPagePosts = posts.slice(0, postsPerPage);
             totalPages = parseInt(totalPagesEl.textContent);
         }
     } catch(e) {}
+    
+    var isReturning = sessionStorage.getItem('isReturningFromOtherPage') === 'true';
+    var overlay = document.getElementById('warningOverlay');
+    var main = document.getElementById('mainContent');
+    
+    if (isReturning) {
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        if (main) {
+            main.style.display = '';
+        }
+        sessionStorage.removeItem('isReturningFromOtherPage');
+    }
     
     function renderCards(posts) {
         var grid = document.getElementById('articleGrid');
