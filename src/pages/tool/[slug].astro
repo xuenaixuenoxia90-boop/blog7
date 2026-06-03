@@ -28,7 +28,13 @@ export async function getStaticPaths() {
 }
 
 const { tool, downloads } = Astro.props;
-const { Content } = await render(tool);
+
+// 过滤掉下载链接行（格式：名称:URL），只渲染正文内容
+const downloadRegex = /^\s*[^:\s]+:\s*https?:\/\/\S+\s*$/gm;
+const filteredBody = tool.body.replace(downloadRegex, '').replace(/\n{3,}/g, '\n\n').trim();
+
+// 创建一个只包含过滤后内容的虚拟 entry 来渲染
+const { Content } = await render({ ...tool, body: filteredBody });
 ---
 
 <BaseLayout title={`${tool.data.title} - 工具分享`} css={['tool.css']}>
