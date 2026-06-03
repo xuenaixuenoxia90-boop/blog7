@@ -4,13 +4,13 @@ body{
     background:#f4f6fb;
     font-family:"Microsoft YaHei",sans-serif;
     color:#222;
-    overflow:hidden;
+    overflow-y:auto;
 }
 
 /* 页面整体 */
 .container{
     width:100%;
-    height:100vh;
+    min-height:100vh;
     display:flex;
 }
 
@@ -23,7 +23,6 @@ body{
 /* 主区域 */
 .main{
     flex:1;
-    height:100vh;
     display:flex;
     flex-direction:column;
     padding:24px 0;
