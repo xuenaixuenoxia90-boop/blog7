@@ -7,17 +7,20 @@ const tools = [...allTools].sort((a, b) => {
   return slugA.localeCompare(slugB);
 });
 
-function parseDownloadLinks(body) {
-  const links = [];
-  const regex = /^(\S+):(https?:\/\/\S+)$/gm;
-  let match;
-  while ((match = regex.exec(body)) !== null) {
-    links.push({
-      name: match[1],
-      url: match[2]
-    });
+const picturesCollection = await getCollection('pictures');
+const picturesBody = picturesCollection[0]?.body || '';
+const imageRegex = /!\[img\]\(([^)]+)\)/g;
+const pictureUrls = [];
+let match;
+while ((match = imageRegex.exec(picturesBody)) !== null) {
+  pictureUrls.push(match[1]);
+}
+
+function getPictureByIndex(index) {
+  if (pictureUrls.length === 0) {
+    return `https://picsum.photos/400/300?${index}`;
   }
-  return links;
+  return pictureUrls[index % pictureUrls.length];
 }
 
 export async function getStaticPaths() {
@@ -28,6 +31,7 @@ export async function getStaticPaths() {
     params: { page: String(i + 1) },
     props: {
       pageNum: i + 1,
+      startIndex: i * perPage,
       pageTools: tools.slice(i * perPage, (i + 1) * perPage),
       totalPages
     }
@@ -35,15 +39,14 @@ export async function getStaticPaths() {
 }
 
 export async function GET({ params, props }) {
-  const { pageNum, pageTools, totalPages } = props;
+  const { pageNum, pageTools, startIndex, totalPages } = props;
   
   return new Response(JSON.stringify({
-    tools: pageTools.map(t => ({
+    tools: pageTools.map((t, localIndex) => ({
       title: t.data.title || t.slug,
       description: t.data.description || '',
-      cover: t.data.cover || '',
-      urlSlug: t.data.slug || t.slug,
-      downloads: parseDownloadLinks(t.body || '')
+      cover: t.data.cover || getPictureByIndex(startIndex + localIndex),
+      urlSlug: t.data.slug || t.slug
     })),
     page: pageNum,
     totalPages,

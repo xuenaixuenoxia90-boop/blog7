@@ -9,6 +9,22 @@ const tools = [...allTools].sort((a, b) => {
   return slugA.localeCompare(slugB);
 });
 
+const picturesCollection = await getCollection('pictures');
+const picturesBody = picturesCollection[0]?.body || '';
+const imageRegex = /!\[img\]\(([^)]+)\)/g;
+const pictureUrls = [];
+let match;
+while ((match = imageRegex.exec(picturesBody)) !== null) {
+  pictureUrls.push(match[1]);
+}
+
+function getPictureByIndex(index) {
+  if (pictureUrls.length === 0) {
+    return `https://picsum.photos/400/300?${index}`;
+  }
+  return pictureUrls[index % pictureUrls.length];
+}
+
 const toolsPerPage = 9;
 const totalPages = Math.ceil(tools.length / toolsPerPage);
 const firstPageTools = tools.slice(0, toolsPerPage);
@@ -42,14 +58,14 @@ const firstPageTools = tools.slice(0, toolsPerPage);
             <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search"> 🔍 搜索</button>
         </div>
         <div class="tool-grid" id="toolGrid">
-            {firstPageTools.map((tool) => {
+            {firstPageTools.map((tool, index) => {
               const title = tool.data.title || tool.slug;
               const desc = tool.data.description || '';
-              const cover = tool.data.cover || '';
+              const cover = tool.data.cover || getPictureByIndex(index);
               const urlSlug = tool.data.slug || tool.slug;
               return (
                 <div class="card" data-slug={urlSlug} data-title={title.toLowerCase()} data-desc={desc.toLowerCase()} onclick="navigateTo('/tool/' + this.dataset.slug)">
-                  <img src={cover || `https://picsum.photos/400/300?${urlSlug}`} alt={title} />
+                  <img src={cover} alt={title} />
                   <div class="card-content">
                     <h3>{title}</h3>
                     <p>{desc}</p>
@@ -108,7 +124,7 @@ const firstPageTools = tools.slice(0, toolsPerPage);
             card.setAttribute('data-desc', tool.description.toLowerCase());
             
             var img = document.createElement('img');
-            img.src = tool.cover || ('https://picsum.photos/400/300?' + tool.urlSlug);
+            img.src = tool.cover;
             img.alt = tool.title;
             
             var cardContent = document.createElement('div');
