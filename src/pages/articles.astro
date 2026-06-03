@@ -136,6 +136,13 @@ const isReturning = true;
             main.style.display = '';
         }
         sessionStorage.removeItem('isReturningFromOtherPage');
+    } else {
+        if (overlay) {
+            overlay.classList.add('active');
+        }
+        if (main) {
+            main.style.display = 'none';
+        }
     }
     
     function renderCards(posts) {
