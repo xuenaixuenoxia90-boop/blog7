@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
-import downloadsConfig from '../../content/tool/downloads.json';
+import downloadsConfig from '../../data/tool-downloads.json';
 
 export async function getStaticPaths() {
   const tools = await getCollection('tool');
