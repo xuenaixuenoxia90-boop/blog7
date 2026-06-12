@@ -91,7 +91,12 @@ function goBackToHome(){
 /* 返回列表页（不显示动画） */
 function goBackToList(listUrl){
     sessionStorage.setItem('isReturningFromOtherPage', 'true');
-    window.location.href = listUrl;
+    const page = sessionStorage.getItem('articleListPage');
+    if (page) {
+        window.location.href = `${listUrl}?page=${page}`;
+    } else {
+        window.location.href = listUrl;
+    }
 }
 
 /* 滚动到顶部 */
