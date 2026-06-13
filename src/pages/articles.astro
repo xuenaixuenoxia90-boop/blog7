@@ -166,7 +166,6 @@ const isReturning = true;
             
             (function(p) {
                 card.addEventListener('click', function() {
-                    sessionStorage.setItem('articleListPage', currentPage);
                     window.location.href = '/article/' + p.urlSlug;
                 });
             })(post);
@@ -225,25 +224,7 @@ const isReturning = true;
         }
         pageCache[1] = cachedCards;
         
-        var initialPage = 1;
-        var urlParams = new URLSearchParams(window.location.search);
-        var pageFromUrl = urlParams.get('page');
-
-        if (pageFromUrl) {
-            initialPage = parseInt(pageFromUrl);
-            // Clear the URL parameter after reading it to prevent it from persisting
-            // window.history.replaceState({}, document.title, window.location.pathname);
-        } else {
-            var savedPage = sessionStorage.getItem('articleListPage');
-            if (savedPage) {
-                initialPage = parseInt(savedPage);
-                sessionStorage.removeItem('articleListPage');
-            }
-        }
-
-        currentPage = initialPage;
-        updateUI(currentPage);
-        window.switchToPage(currentPage);
+        updateUI(1);
         
         if (pageSelect) {
             pageSelect.addEventListener('change', function() {
