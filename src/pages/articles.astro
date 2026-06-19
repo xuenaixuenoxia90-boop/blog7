@@ -187,11 +187,16 @@ const isReturning = true;
     }
     
     window.switchToPage = function(pageNum) {
-        if (pageNum < 1 || pageNum > totalPages) return;
+        console.log('switchToPage 被调用，页码:', pageNum, '总页数:', totalPages);
+        if (pageNum < 1 || pageNum > totalPages) {
+            console.log('页码超出范围，取消切换');
+            return;
+        }
         currentPage = pageNum;
         updateUI(pageNum);
         
         if (pageCache[pageNum]) {
+            console.log('从缓存加载页码:', pageNum);
             var grid = document.getElementById('articleGrid');
             grid.innerHTML = '';
             for (var i = 0; i < pageCache[pageNum].length; i++) {
@@ -200,6 +205,7 @@ const isReturning = true;
             return;
         }
         
+        console.log('从服务器加载页码:', pageNum);
         fetch('/api/posts/' + pageNum + '.json')
             .then(function(res) { return res.json(); })
             .then(function(data) {
@@ -282,7 +288,9 @@ const isReturning = true;
                 sessionStorage.removeItem('articlesPage');
                 console.log('准备切换到页码:', pageNum);
                 if (pageNum > 1 && pageNum <= totalPages) {
-                    window.switchToPage(pageNum);
+                    setTimeout(function() {
+                        window.switchToPage(pageNum);
+                    }, 100);
                 }
             }
         }
