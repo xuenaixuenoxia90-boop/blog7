@@ -68,7 +68,7 @@ const isReturning = true;
               const cover = post.data.cover || getPictureByIndex(index);
               const urlSlug = post.data.slug || post.slug;
               return (
-                <div class="card" data-slug={urlSlug} onclick="navigateTo('/article/' + this.dataset.slug)">
+                <div class="card" data-slug={urlSlug}>
                   <img src={cover} alt={title} />
                   <h3>{title}</h3>
                 </div>
@@ -223,7 +223,14 @@ const isReturning = true;
         var firstPageCards = document.querySelectorAll('#articleGrid .card');
         var cachedCards = [];
         for (var i = 0; i < firstPageCards.length; i++) {
-            cachedCards.push(firstPageCards[i]);
+            var card = firstPageCards[i];
+            (function(c) {
+                c.addEventListener('click', function() {
+                    sessionStorage.setItem('articlesPage', String(currentPage));
+                    window.location.href = '/article/' + c.dataset.slug;
+                });
+            })(card);
+            cachedCards.push(card);
         }
         pageCache[1] = cachedCards;
         
