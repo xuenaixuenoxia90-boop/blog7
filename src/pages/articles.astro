@@ -114,28 +114,12 @@ const isReturning = true;
 (function() {
     var pageCache = { 1: [] };
     var currentPage = 1;
-    var totalPages = 1;
+    var totalPages = {totalPages};
     var prevBtn = null;
     var nextBtn = null;
     var pageSelect = null;
     
-    function readTotalPages() {
-        try {
-            var totalPagesEl = document.getElementById('total-pages');
-            if (totalPagesEl) {
-                var val = parseInt(totalPagesEl.textContent);
-                if (!isNaN(val) && val > 0) {
-                    totalPages = val;
-                    console.log('读取到总页数:', totalPages);
-                }
-            }
-        } catch(e) {
-            console.error('读取总页数失败:', e);
-        }
-    }
-    
-    // 立即尝试读取
-    readTotalPages();
+    console.log('初始 totalPages:', totalPages);
     
     var isReturning = sessionStorage.getItem('isReturningFromOtherPage') === 'true';
     var overlay = document.getElementById('warningOverlay');
@@ -194,7 +178,7 @@ const isReturning = true;
             pageSelect.value = String(pageNum);
         }
         if (prevBtn) prevBtn.disabled = (pageNum <= 1);
-        if (nextBtn) nextBtn.disabled = (pageNum >= totalPages);
+        if (nextBtn) nextBtn.disabled = (totalPages <= 1 || pageNum >= totalPages);
     }
     
     window.switchToPage = function(pageNum) {
@@ -234,7 +218,6 @@ const isReturning = true;
     };
     
     document.addEventListener('DOMContentLoaded', function() {
-        readTotalPages();
         console.log('DOMContentLoaded 后 totalPages:', totalPages);
         
         prevBtn = document.getElementById('prevBtn');
@@ -255,7 +238,8 @@ const isReturning = true;
         }
         pageCache[1] = cachedCards;
         
-        updateUI(1);
+        // 更新 UI，确保按钮状态正确
+        updateUI(currentPage);
         
         if (pageSelect) {
             pageSelect.addEventListener('change', function() {
@@ -294,15 +278,7 @@ const isReturning = true;
     // 处理页面恢复（bfcache）
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
-            console.log('页面从缓存恢复');
-            // 重新读取 totalPages
-            try {
-                var totalPagesEl = document.getElementById('total-pages');
-                if (totalPagesEl) {
-                    totalPages = parseInt(totalPagesEl.textContent);
-                }
-            } catch(e) {}
-            console.log('恢复后 totalPages:', totalPages);
+            console.log('页面从缓存恢复, totalPages:', totalPages);
             var savedPage = sessionStorage.getItem('articlesPage');
             console.log('恢复页码检查:', savedPage);
             if (savedPage) {
