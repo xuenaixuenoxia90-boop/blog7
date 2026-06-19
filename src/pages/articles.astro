@@ -119,12 +119,23 @@ const isReturning = true;
     var nextBtn = null;
     var pageSelect = null;
     
-    try {
-        var totalPagesEl = document.getElementById('total-pages');
-        if (totalPagesEl) {
-            totalPages = parseInt(totalPagesEl.textContent);
+    function readTotalPages() {
+        try {
+            var totalPagesEl = document.getElementById('total-pages');
+            if (totalPagesEl) {
+                var val = parseInt(totalPagesEl.textContent);
+                if (!isNaN(val) && val > 0) {
+                    totalPages = val;
+                    console.log('读取到总页数:', totalPages);
+                }
+            }
+        } catch(e) {
+            console.error('读取总页数失败:', e);
         }
-    } catch(e) {}
+    }
+    
+    // 立即尝试读取
+    readTotalPages();
     
     var isReturning = sessionStorage.getItem('isReturningFromOtherPage') === 'true';
     var overlay = document.getElementById('warningOverlay');
@@ -223,6 +234,9 @@ const isReturning = true;
     };
     
     document.addEventListener('DOMContentLoaded', function() {
+        readTotalPages();
+        console.log('DOMContentLoaded 后 totalPages:', totalPages);
+        
         prevBtn = document.getElementById('prevBtn');
         nextBtn = document.getElementById('nextBtn');
         pageSelect = document.getElementById('pageSelect');
@@ -281,6 +295,14 @@ const isReturning = true;
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
             console.log('页面从缓存恢复');
+            // 重新读取 totalPages
+            try {
+                var totalPagesEl = document.getElementById('total-pages');
+                if (totalPagesEl) {
+                    totalPages = parseInt(totalPagesEl.textContent);
+                }
+            } catch(e) {}
+            console.log('恢复后 totalPages:', totalPages);
             var savedPage = sessionStorage.getItem('articlesPage');
             console.log('恢复页码检查:', savedPage);
             if (savedPage) {
