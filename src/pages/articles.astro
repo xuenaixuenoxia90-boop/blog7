@@ -168,6 +168,7 @@ const isReturning = true;
             
             (function(p) {
                 card.addEventListener('click', function() {
+                    console.log('保存页码:', currentPage);
                     sessionStorage.setItem('articlesPage', String(currentPage));
                     window.location.href = '/article/' + p.urlSlug;
                 });
@@ -259,11 +260,30 @@ const isReturning = true;
         
         // 恢复之前保存的页码
         var savedPage = sessionStorage.getItem('articlesPage');
+        console.log('恢复页码检查:', savedPage);
         if (savedPage) {
             var pageNum = parseInt(savedPage);
             sessionStorage.removeItem('articlesPage');
+            console.log('准备切换到页码:', pageNum);
             if (pageNum > 1 && pageNum <= totalPages) {
                 window.switchToPage(pageNum);
+            }
+        }
+    });
+    
+    // 处理页面恢复（bfcache）
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            console.log('页面从缓存恢复');
+            var savedPage = sessionStorage.getItem('articlesPage');
+            console.log('恢复页码检查:', savedPage);
+            if (savedPage) {
+                var pageNum = parseInt(savedPage);
+                sessionStorage.removeItem('articlesPage');
+                console.log('准备切换到页码:', pageNum);
+                if (pageNum > 1 && pageNum <= totalPages) {
+                    window.switchToPage(pageNum);
+                }
             }
         }
     });
