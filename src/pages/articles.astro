@@ -168,6 +168,7 @@ const isReturning = true;
             
             (function(p) {
                 card.addEventListener('click', function() {
+                    sessionStorage.setItem('articlesPage', String(currentPage));
                     window.location.href = '/article/' + p.urlSlug;
                 });
             })(post);
@@ -247,6 +248,16 @@ const isReturning = true;
                 e.preventDefault();
                 window.switchToPage(currentPage + 1);
             });
+        }
+        
+        // 恢复之前保存的页码
+        var savedPage = sessionStorage.getItem('articlesPage');
+        if (savedPage) {
+            var pageNum = parseInt(savedPage);
+            sessionStorage.removeItem('articlesPage');
+            if (pageNum > 1 && pageNum <= totalPages) {
+                window.switchToPage(pageNum);
+            }
         }
     });
 })();
