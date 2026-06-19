@@ -95,21 +95,15 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
 <!-- 总页数数据 -->
 <script id="total-pages" type="application/json">{totalPages}</script>
 
-<script is:inline>
+<script is:inline define:vars={{ totalPages }}>
 (function() {
     var pageCache = { 1: [] };
     var currentPage = 1;
-    var totalPages = 1;
     var prevBtn = null;
     var nextBtn = null;
     var pageSelect = null;
     
-    try {
-        var totalPagesEl = document.getElementById('total-pages');
-        if (totalPagesEl) {
-            totalPages = parseInt(totalPagesEl.textContent);
-        }
-    } catch(e) {}
+    console.log('初始 totalPages:', totalPages);
     
     function renderCards(videos) {
         var grid = document.getElementById('videoGrid');
@@ -128,6 +122,7 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
             
             (function(id) {
                 card.addEventListener('click', function() {
+                    sessionStorage.setItem('videosPage', String(currentPage));
                     window.location.href = '/video/' + id;
                 });
             })(v.id);
@@ -141,15 +136,20 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
             pageSelect.value = String(pageNum);
         }
         if (prevBtn) prevBtn.disabled = (pageNum <= 1);
-        if (nextBtn) nextBtn.disabled = (pageNum >= totalPages);
+        if (nextBtn) nextBtn.disabled = (totalPages <= 1 || pageNum >= totalPages);
     }
     
     window.switchToPage = function(pageNum) {
-        if (pageNum < 1 || pageNum > totalPages) return;
+        console.log('switchToPage 被调用，页码:', pageNum, '总页数:', totalPages);
+        if (pageNum < 1 || pageNum > totalPages) {
+            console.log('页码超出范围，取消切换');
+            return;
+        }
         currentPage = pageNum;
         updateUI(pageNum);
         
         if (pageCache[pageNum]) {
+            console.log('从缓存加载页码:', pageNum);
             var grid = document.getElementById('videoGrid');
             grid.innerHTML = '';
             for (var i = 0; i < pageCache[pageNum].length; i++) {
@@ -158,6 +158,7 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
             return;
         }
         
+        console.log('从服务器加载页码:', pageNum);
         fetch('/api/videos/' + pageNum + '.json')
             .then(function(res) { return res.json(); })
             .then(function(data) {
@@ -175,6 +176,8 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
     };
     
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded 后 totalPages:', totalPages);
+        
         prevBtn = document.getElementById('prevBtn');
         nextBtn = document.getElementById('nextBtn');
         pageSelect = document.getElementById('pageSelect');
@@ -182,11 +185,18 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
         var firstPageCards = document.querySelectorAll('#videoGrid .video-card');
         var cachedCards = [];
         for (var i = 0; i < firstPageCards.length; i++) {
-            cachedCards.push(firstPageCards[i]);
+            var card = firstPageCards[i];
+            (function(c) {
+                c.addEventListener('click', function() {
+                    sessionStorage.setItem('videosPage', String(currentPage));
+                    window.location.href = '/video/' + c.dataset.id;
+                });
+            })(card);
+            cachedCards.push(card);
         }
         pageCache[1] = cachedCards;
         
-        updateUI(1);
+        updateUI(currentPage);
         
         if (pageSelect) {
             pageSelect.addEventListener('change', function() {
@@ -208,11 +218,43 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
                 window.switchToPage(currentPage + 1);
             });
         }
+        
+        // 恢复之前保存的页码
+        var savedPage = sessionStorage.getItem('videosPage');
+        console.log('恢复页码检查:', savedPage);
+        if (savedPage) {
+            var pageNum = parseInt(savedPage);
+            sessionStorage.removeItem('videosPage');
+            console.log('准备切换到页码:', pageNum);
+            if (pageNum > 1 && pageNum <= totalPages) {
+                window.switchToPage(pageNum);
+            }
+        }
     });
-})();
+    
+    // 处理页面恢复（bfcache）
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            console.log('页面从缓存恢复, totalPages:', totalPages);
+            var savedPage = sessionStorage.getItem('videosPage');
+            console.log('恢复页码检查:', savedPage);
+            if (savedPage) {
+                var pageNum = parseInt(savedPage);
+                sessionStorage.removeItem('videosPage');
+                console.log('准备切换到页码:', pageNum);
+                if (pageNum > 1 && pageNum <= totalPages) {
+                    setTimeout(function() {
+                        window.switchToPage(pageNum);
+                    }, 100);
+                }
+            }
+        }
+    });
 
-window.openVideo = function(id) {
-    window.location.href = '/video/' + id;
-};
+    window.openVideo = function(id) {
+        sessionStorage.setItem('videosPage', String(currentPage));
+        window.location.href = '/video/' + id;
+    };
+})();
 </script>
 </BaseLayout>
