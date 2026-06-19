@@ -10,4 +10,6 @@ downloadId: android-capture
 
 本软件均需要root手机，原理是通过root刷入实现对应目标软件的指纹替换。
 
+FakerUnlocker：https://pkq1.qzz.io/%E6%88%91%E7%9A%84%E7%BD%91%E7%AB%99apk/FakerUnlocker-v1.0-release.apk
 
+app-debug：https://pkq1.qzz.io/%E6%88%91%E7%9A%84%E7%BD%91%E7%AB%99apk/app-debug.apk
