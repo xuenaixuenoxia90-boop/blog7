@@ -110,11 +110,10 @@ const isReturning = true;
 <!-- 总页数数据 -->
 <script id="total-pages" type="application/json">{totalPages}</script>
 
-<script is:inline>
+<script is:inline define:vars={{ totalPages }}>
 (function() {
     var pageCache = { 1: [] };
     var currentPage = 1;
-    var totalPages = {totalPages};
     var prevBtn = null;
     var nextBtn = null;
     var pageSelect = null;
