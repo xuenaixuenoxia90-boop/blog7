@@ -38,13 +38,13 @@ const firstPageVideos = videosData.slice(0, videosPerPage);
         </div>
         <div class="video-wrapper">
             <div class="video-grid" id="videoGrid">
-                {firstPageVideos.map((video) => {
+                {firstPageVideos.map((video, index) => {
               const title = video.title || video.id;
-              const cover = video.cover || '';
+              const cover = getPictureByIndex(index);
               return (
                 <div class="video-card" data-id={video.id} data-cover={cover} data-title={title} onclick="window.openVideo(this.dataset.id)">
                     <div class="video-cover">
-                        <img src={cover || `https://picsum.photos/400/300?${video.id}`} />
+                        <img src={cover} />
                         <div class="play-icon">▶</div>
                     </div>
                     <div class="video-info">
