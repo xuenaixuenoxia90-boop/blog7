@@ -400,7 +400,7 @@ function generateTextPoster(text) {
     ctx.fillRect(0, 0, gridW, gridH);
 
     // 计算合适的字体大小，分两行显示
-    const fontSize = Math.floor(gridH * 0.25);
+    const fontSize = Math.floor(gridH * 0.3);
     ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
@@ -460,19 +460,19 @@ function launchFireworks() {
 
     function createFirework(x, y) {
         const color = colors[Math.floor(Math.random() * colors.length)];
-        const count = 20 + Math.floor(Math.random() * 15);
+        const count = 30 + Math.floor(Math.random() * 20);
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count;
-            const speed = 1.5 + Math.random() * 3;
+            const speed = 2 + Math.random() * 4;
             particles.push({
                 x: x,
                 y: y,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
-                life: 40 + Math.random() * 30,
-                maxLife: 70,
+                life: 50 + Math.random() * 30,
+                maxLife: 80,
                 color: color,
-                size: 1.5 + Math.random() * 1.5
+                size: 2.5 + Math.random() * 2
             });
         }
     }
@@ -482,22 +482,22 @@ function launchFireworks() {
         const x = Math.random() * fireworksCanvas.width;
         const y = Math.random() * fireworksCanvas.height * 0.6;
         createFirework(x, y);
-    }, 500);
+    }, 400);
 
     // 初始发射几个
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
         setTimeout(() => {
             createFirework(
                 Math.random() * fireworksCanvas.width,
                 Math.random() * fireworksCanvas.height * 0.5
             );
-        }, i * 300);
+        }, i * 200);
     }
 
     function animateFireworks() {
-        // 透明背景，不清除画布，用半透明覆盖实现拖尾
+        // 透明背景，用半透明覆盖实现拖尾
         fCtx.globalCompositeOperation = 'destination-out';
-        fCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        fCtx.fillStyle = 'rgba(0, 0, 0, 0.08)';
         fCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
         fCtx.globalCompositeOperation = 'source-over';
 
@@ -505,15 +505,18 @@ function launchFireworks() {
             const p = particles[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.vy += 0.04;
+            p.vy += 0.03;
             p.life--;
 
-            const alpha = p.life / p.maxLife;
+            const alpha = Math.min(1, p.life / p.maxLife * 1.5);
             fCtx.globalAlpha = alpha;
             fCtx.fillStyle = p.color;
+            fCtx.shadowBlur = 8;
+            fCtx.shadowColor = p.color;
             fCtx.beginPath();
             fCtx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
             fCtx.fill();
+            fCtx.shadowBlur = 0;
 
             if (p.life <= 0) {
                 particles.splice(i, 1);
