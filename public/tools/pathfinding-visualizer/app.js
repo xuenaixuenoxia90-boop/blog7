@@ -399,15 +399,20 @@ function generateTextPoster(text) {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, gridW, gridH);
 
-    // 计算合适的字体大小
-    const fontSize = Math.floor(gridH * 0.35);
+    // 计算合适的字体大小，分两行显示
+    const fontSize = Math.floor(gridH * 0.25);
     ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // 文字居中绘制
-    ctx.fillText(text, gridW / 2, gridH / 2);
+    // 分两行绘制文字
+    const mid = Math.ceil(text.length / 2);
+    const line1 = text.slice(0, mid);
+    const line2 = text.slice(mid);
+    const lineHeight = fontSize * 1.3;
+    ctx.fillText(line1, gridW / 2, gridH / 2 - lineHeight / 2);
+    ctx.fillText(line2, gridW / 2, gridH / 2 + lineHeight / 2);
 
     // 采样像素，映射到网格
     const imageData = ctx.getImageData(0, 0, gridW, gridH);
@@ -451,22 +456,23 @@ function launchFireworks() {
 
     const particles = [];
     const colors = ['#ff0040', '#ff8000', '#ffff00', '#00ff00', '#00ffff', '#0080ff', '#ff00ff', '#ffffff'];
+    let animId = null;
 
     function createFirework(x, y) {
         const color = colors[Math.floor(Math.random() * colors.length)];
-        const count = 40 + Math.floor(Math.random() * 30);
+        const count = 20 + Math.floor(Math.random() * 15);
         for (let i = 0; i < count; i++) {
             const angle = (Math.PI * 2 * i) / count;
-            const speed = 2 + Math.random() * 4;
+            const speed = 1.5 + Math.random() * 3;
             particles.push({
                 x: x,
                 y: y,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
-                life: 60 + Math.random() * 40,
-                maxLife: 100,
+                life: 40 + Math.random() * 30,
+                maxLife: 70,
                 color: color,
-                size: 2 + Math.random() * 2
+                size: 1.5 + Math.random() * 1.5
             });
         }
     }
@@ -476,27 +482,30 @@ function launchFireworks() {
         const x = Math.random() * fireworksCanvas.width;
         const y = Math.random() * fireworksCanvas.height * 0.6;
         createFirework(x, y);
-    }, 300);
+    }, 500);
 
     // 初始发射几个
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
         setTimeout(() => {
             createFirework(
                 Math.random() * fireworksCanvas.width,
                 Math.random() * fireworksCanvas.height * 0.5
             );
-        }, i * 200);
+        }, i * 300);
     }
 
     function animateFireworks() {
-        fCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        // 透明背景，不清除画布，用半透明覆盖实现拖尾
+        fCtx.globalCompositeOperation = 'destination-out';
+        fCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
         fCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+        fCtx.globalCompositeOperation = 'source-over';
 
         for (let i = particles.length - 1; i >= 0; i--) {
             const p = particles[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.vy += 0.05; // 重力
+            p.vy += 0.04;
             p.life--;
 
             const alpha = p.life / p.maxLife;
@@ -511,27 +520,31 @@ function launchFireworks() {
             }
         }
 
-        if (particles.length > 0 || fireworkInterval) {
-            requestAnimationFrame(animateFireworks);
+        if (particles.length > 0) {
+            animId = requestAnimationFrame(animateFireworks);
         }
     }
 
-    animateFireworks();
+    animId = requestAnimationFrame(animateFireworks);
 
     // 5秒后清除
     setTimeout(() => {
         clearInterval(fireworkInterval);
         fireworkInterval = null;
-        // 淡出效果
-        let fadeOut = setInterval(() => {
-            fCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        // 淡出
+        let fadeCount = 0;
+        const fadeOut = setInterval(() => {
+            fCtx.globalCompositeOperation = 'destination-out';
+            fCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
             fCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            fCtx.globalCompositeOperation = 'source-over';
+            fadeCount++;
+            if (fadeCount > 15) {
+                clearInterval(fadeOut);
+                if (animId) cancelAnimationFrame(animId);
+                fireworksCanvas.remove();
+            }
         }, 50);
-
-        setTimeout(() => {
-            clearInterval(fadeOut);
-            fireworksCanvas.remove();
-        }, 500);
     }, 5000);
 }
 
