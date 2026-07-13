@@ -276,6 +276,7 @@ nav{
     aspect-ratio: 1;
     width: 100%;
     border: 0.5px solid var(--light-line);
+    touch-action: none;
 }
 .guide-bar{
     gap: 16px;
@@ -291,6 +292,7 @@ nav{
 }
 #board{
     overflow: hidden;
+    touch-action: none;
 }
 .targetAlgo{
     color: aliceblue;

@@ -400,7 +400,12 @@ function generateTextPoster(text) {
     ctx.fillRect(0, 0, gridW, gridH);
 
     // 计算合适的字体大小，分两行显示
-    const fontSize = Math.floor(gridH * 0.3);
+    // 根据网格宽度和文字长度动态调整，确保不超视距
+    const charsPerLine = Math.ceil(text.length / 2);
+    const maxFontSizeByWidth = (gridW * 0.9) / (charsPerLine * 0.85);
+    const maxFontSizeByHeight = gridH * 0.25;
+    const fontSize = Math.floor(Math.min(maxFontSizeByWidth, maxFontSizeByHeight));
+
     ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
