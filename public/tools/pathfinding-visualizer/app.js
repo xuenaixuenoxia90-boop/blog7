@@ -117,7 +117,7 @@ const removeActive = (elements , parent = false )=>{
 }
 
 let pixelSize = 22;
-let speed = 'Fast';
+let speed = '快';
 let algorithm = 'BFS' ;
 const visualizeBtn = document.getElementById("visualize");
 /**
@@ -137,15 +137,20 @@ function toggle_dropOption(target){
             removeActive(dropOptions);
             dropOption.classList.add('active')
 
-            if(target === 'pixel'){
+            if(target === '像素'){
                 pixelSize = +dropOption.innerText.replace('px', '');
                 renderBoard(pixelSize)
-            }else if (target === 'speed'){
+            }else if (target === '速度'){
                 speed = dropOption.innerText;
-            }else if( target === 'algorithms'){
-                algoFname =  dropOption.innerText.split(' ')[0];
-                algorithm = algoFname;
-                visualizeBtn.innerText = `Visualize ${algorithm}`;
+            }else if( target === '算法'){
+                const algoText = dropOption.innerText;
+                if(algoText === 'BFS') algorithm = 'BFS';
+                else if(algoText === 'DFS') algorithm = 'DFS';
+                else if(algoText === '双向搜索') algorithm = 'biDirectional';
+                else if(algoText === 'Dijkstra算法') algorithm = "Dijkstra's";
+                else if(algoText === '贪心最佳优先搜索') algorithm = 'Greedy';
+                else if(algoText === 'A*算法') algorithm = 'A*';
+                visualizeBtn.innerText = `可视化 ${algoText}`;
             }
             removeActive(navOptions , true);
         });
@@ -568,9 +573,9 @@ visualizeBtn.addEventListener('click',()=>{
 
 
 const SPEEDS = {
-    Fast: 10,   
-    Normal: 25, 
-    Slow: 50    
+    '快': 10,   
+    '正常': 25, 
+    '慢': 50    
 };
 
 function animate(elements, className) {
@@ -1222,7 +1227,7 @@ tutorial.addEventListener('click', (e) => {
 tutorialToggle.addEventListener('click', () => {
     tutorial.classList.add('active');
     count = 0;
-    nextBtn.innerText = "next";
+    nextBtn.innerText = "下一步";
     prevBtn.classList.add('unactive');
     moveSlides(count);
 })
@@ -1243,7 +1248,7 @@ nextBtn.addEventListener('click', () => {
     }
     count++;
     if (count == slides.length - 1) {
-        nextBtn.innerText = "finish";
+        nextBtn.innerText = "完成";
     }
     moveSlides(count);
     prevBtn.classList.remove('unactive');
@@ -1253,7 +1258,7 @@ prevBtn.addEventListener('click', () => {
     if (count == 0) {
         return;
     }
-    nextBtn.innerText = "next";
+    nextBtn.innerText = "下一步";
     count--;
     if (count == 0) {
         prevBtn.classList.add('unactive');
@@ -1274,11 +1279,11 @@ dots.forEach((dot, i) => {
             prevBtn.classList.add('unactive');
         }
         else if (count == slides.length - 1) {
-            nextBtn.innerText = "finish";
+            nextBtn.innerText = "完成";
         }
         else {
             prevBtn.classList.remove('unactive');
-            nextBtn.innerText = "next";
+            nextBtn.innerText = "下一步";
         }
         moveSlides(count);
     })

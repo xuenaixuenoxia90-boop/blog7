@@ -1,115 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Path Finder</title>
+    <title>路径寻找可视化</title>
     <link rel="stylesheet" href="./style/style.css">
     <link rel="stylesheet" href="./style/utility.css">
 </head>
 <body>
 
-    <!-- tutotial section -->
+    <!-- 教程部分 -->
     <div class="tutorial" id="tutorial">
         <div class="card">
             <div class="upper">
-                <!-- -------- what slide -->
+                <!-- -------- 什么是路径寻找可视化 -->
                 <div class="slide">
-                    <h4>what is path finder visualizer</h4>
+                    <h4>什么是路径寻找可视化</h4>
                     <div class="img-box"></div>
-                    <p>It helps you see how path finding <span class="blue">algorithms</span> find the most efficient
-                        <span class="blue">route</span> between source to target on a grid. </p>
+                    <p>它帮助你看到路径寻找<span class="blue">算法</span>如何在网格上找到从起点到终点的最高效<span class="blue">路线</span>。</p>
                 </div>
 
-                <!-- -------- how slide -->
+                <!-- -------- 它是如何工作的 -->
                 <div class="slide">
-                    <h4>How does it work</h4>
+                    <h4>它是如何工作的</h4>
                     <div class="img-box"></div>
                     <p>
-                        You can set start and end points, create mazes, choose algorithms, and watch the process in
-                        action. 
-                        It's a fun and visual way to understand how different strategies navigate through obstacles to
-                        find the <span class="blue">shortest path</span>.
+                        你可以设置起点和终点，创建迷宫，选择算法，并观看过程。
+                        这是一种有趣且直观的方式，让你了解不同的策略如何穿越障碍物找到<span class="blue">最短路径</span>。
                     </p>
                 </div>
 
-                <!-- -------- source/target slide -->
+                <!-- -------- 调整起点/终点 -->
                 <div class="slide default-bg">
-                    <h4>Adjust source/target</h4>
+                    <h4>调整起点/终点</h4>
                     <div class="img-box shadow">
                         <img src="assets/tutorial/drag-source-target.gif" alt="">
                     </div>
                     <p>
-                        Click and drag the <span class="blue">source/target</span> marker to where you want it on the grid.
+                        点击并拖动<span class="blue">起点/终点</span>标记到网格上你想要的位置。
                     </p>
                 </div>
 
-                <!-- -------- draw wall slide -->
+                <!-- -------- 绘制墙壁/障碍物 -->
                 <div class="slide default-bg">
-                    <h4>Draw walls/obstacles</h4>
+                    <h4>绘制墙壁/障碍物</h4>
                     <div class="img-box shadow">
                         <img src="assets/tutorial/draw-wall.gif" alt="">
                     </div>
                     <p>
-                        Use the 'Draw Wall' option to mark obstacles on the grid. <br> Simply <span class="blue">click</span> and <span class="blue">drag</span> to create walls and define the layout.
+                        使用"绘制墙壁"选项在网格上标记障碍物。<br>只需<span class="blue">点击</span>并<span class="blue">拖动</span>即可创建墙壁并定义布局。
                     </p>
                 </div>
 
-                <!-- -------- mase genration slide -->
+                <!-- -------- 生成迷宫 -->
                 <div class="slide default-bg">
-                    <h4>generate maze</h4>
+                    <h4>生成迷宫</h4>
                     <div class="img-box shadow">
                         <img src="assets/tutorial/generate-maze.gif" alt="">
                     </div>
                     <p>
-                        It's time to give your pathfinding algorithm a <span class="blue">brainstorm!</span> <br>
-                        Just click <span class="blue">Generate Maze</span> and watch the algorithm's creativity.
+                        是时候让你的路径寻找算法大开脑洞了！<br>
+                        只需点击<span class="blue">生成迷宫</span>，观看算法的创造力。
                     </p>
                 </div>
 
-                <!------ pixel size change slide -->
+                <!------ 像素大小 -->
                 <div class="slide default-bg">
-                    <h4>Select Pixel Size</h4>
+                    <h4>选择像素大小</h4>
                     <div class="img-box shadow">
                         <img src="assets/tutorial/pixel_tutorial.png" alt="">
                     </div>
                     <p>
-                        It allow you to increase or decrease the cells in the grid<br>
-                        helps you to get wider range in small devices, like <span class="blue">mobile phone</span>
+                        它允许你增加或减少网格中的单元格数量<br>
+                        帮助你在小型设备（如<span class="blue">手机</span>）上获得更宽的范围
                     </p>
                 </div>
 
-                <!-------- speed slide -->
+                <!-------- 速度 -->
                 <div class="slide default-bg">
-                    <h4>Adjust the speed</h4>
+                    <h4>调整速度</h4>
                     <div class="img-box shadow">
                         <img src="assets/tutorial/speed_tutorial.png" alt="">
                     </div>
                     <p>
-                        Adjust the <span class="blue">speed</span> of the searching to follow the algorithm's progress
-                        closely.
+                        调整搜索的<span class="blue">速度</span>以密切跟踪算法的进度。
                     </p>
                 </div>
 
-                <!----algo slide -->
+                <!----算法 -->
                 <div class="slide default-bg">
-                    <h4>Select Algorithm</h4>
+                    <h4>选择算法</h4>
                     <div class="img-box shadow">
                         <img src="assets/tutorial/algorithm_tutorial.png" alt="">
                     </div>
                     <p>
-                        Pick one... from various <span class="blue">pathfinding algorithms.</span> Each has its unique way
-                        of finding the shortest path.
+                        从各种<span class="blue">路径寻找算法</span>中选择一个...每个算法都有自己独特的寻找最短路径的方式。
                     </p>
                 </div>
 
-                <!------finish-->
+                <!------完成-->
                 <div class="slide">
-                    <h4>click on visualize btn</h4>
+                    <h4>点击可视化按钮</h4>
                     <div class="img-box"></div>
                     <p>
-                        click the <span class="blue">visualize</span> btn and boom !<br>
-                        enjoy the process
+                        点击<span class="blue">可视化</span>按钮，然后boom！<br>
+                        享受这个过程
                     </p>
                 </div>
 
@@ -121,11 +116,11 @@
             </div>
             <div class="bottom">
                 <div class="left">
-                    <div class="btn" id="skip">skip tutorial</div>
+                    <div class="btn" id="skip">跳过教程</div>
                 </div>
                 <div class="right">
-                    <div id="prev" class="btn unactive">previous</div>
-                    <div id="next" class="btn">next</div>
+                    <div id="prev" class="btn unactive">上一步</div>
+                    <div id="next" class="btn">下一步</div>
                 </div>
             </div>
         </div>
@@ -135,21 +130,21 @@
    <div class="template">
         <header>
             <nav>
-                <a href="./index.html" class="logo">Pathfinding Visualizer</a>
-                <button class="btn" id ="visualize">Visualize</button>
+                <a href="./index.html" class="logo">路径寻找可视化</a>
+                <button class="btn" id ="visualize">可视化</button>
                 <ul class="nav-menu">
                     <li>
-                        <a href="#" id="clearPath">clear path</a>
+                        <a href="#" id="clearPath">清除路径</a>
                     </li>
                     <li>
-                        <a href="#" id="clearBoard">clear board</a>
+                        <a href="#" id="clearBoard">清除面板</a>
                     </li>
                     <li>
-                        <a href="#" id="generateMazeBtn">generate maze</a>
+                        <a href="#" id="generateMazeBtn">生成迷宫</a>
                     </li>
 
                     <li class="drop-box">
-                        <a href="#">pixel<span class="caret"></span></a>
+                        <a href="#">像素<span class="caret"></span></a>
                         <ul class="drop-menu">
                             <!-- <li><a href="#">14px</a></li> -->
                             <!-- <li><a href="#">16px</a></li> -->
@@ -162,23 +157,23 @@
                     </li>
 
                     <li class="drop-box">
-                        <a href="#">speed<span class="caret"></span></a>
+                        <a href="#">速度<span class="caret"></span></a>
                         <ul class="drop-menu">
-                            <li><a href="#">Slow</a></li>
-                            <li><a href="#">Normal</a></li>
-                            <li class="active"><a href="#">Fast</a></li>
+                            <li><a href="#">慢</a></li>
+                            <li><a href="#">正常</a></li>
+                            <li class="active"><a href="#">快</a></li>
                         </ul>
                     </li>
 
                     <li class="drop-box">
-                        <a href="#">algorithms<span class="caret"></span></a>
+                        <a href="#">算法<span class="caret"></span></a>
                         <ul class="drop-menu targetAlgo">
                             <li class="active"><a href="#">BFS</a></li>
                             <li><a href="#">DFS</a></li>
-                            <li><a href="#">biDirectional</a></li>
-                            <li><a href="#">Dijkstra's Algorithm</a></li>
-                            <li><a href="#">Greedy Best-first Search</a></li>
-                            <li><a href="#">A* Algorithm</a></li>
+                            <li><a href="#">双向搜索</a></li>
+                            <li><a href="#">Dijkstra算法</a></li>
+                            <li><a href="#">贪心最佳优先搜索</a></li>
+                            <li><a href="#">A*算法</a></li>
                         </ul>
                     </li>
 
@@ -188,32 +183,32 @@
             <ul class="guide-bar">
                <li>
                     <span class="icon source"></span>
-                    <span class="text">Source</span>
+                    <span class="text">起点</span>
                </li>
                <li>
                     <span class="icon target"></span>
-                    <span class="text">Target</span>
+                    <span class="text">终点</span>
                 </li>
                 <li>
                     <span class="icon path"></span>
-                    <span class="text">Shortest-Path Node</span>
+                    <span class="text">最短路径节点</span>
                 </li>
                 <li>
                     <span class="icon visited"></span>
-                    <span class="text">Visited Node</span>
+                    <span class="text">已访问节点</span>
                 </li>
                 <li>
                     <span class="icon unvisited"></span>
-                    <span class="text">Unvisited Node</span>
+                    <span class="text">未访问节点</span>
                 </li>
                 <li>
                     <span class="icon wall"></span>
-                    <span class="text">Wall</span>
+                    <span class="text">墙壁</span>
                 </li>
                 <div class="tutorial-toggle"></div>
             </ul>
         </header>
-        <!-- ============ DYNAMIC BOARD ================ -->
+        <!-- ============ 动态面板 ================ -->
         <div id="board"><!-- js--></div>
    </div>
 </body>
