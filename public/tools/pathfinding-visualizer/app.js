@@ -400,7 +400,7 @@ function generateTextPoster(text) {
     ctx.fillRect(0, 0, gridW, gridH);
 
     // 计算合适的字体大小
-    const fontSize = Math.floor(gridH * 0.6);
+    const fontSize = Math.floor(gridH * 0.35);
     ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
     ctx.fillStyle = '#fff';
     ctx.textAlign = 'center';
