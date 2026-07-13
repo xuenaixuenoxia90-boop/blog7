@@ -58,10 +58,17 @@ const firstPageTools = tools.slice(0, toolsPerPage);
             <button class="search-btn" data-cn="🔍 搜索" data-en="🔍 Search"> 🔍 搜索</button>
         </div>
         <div class="tool-grid" id="toolGrid">
+            <div class="card" data-slug="pathfinding-visualizer" data-title="pathfinding visualizer" data-desc="pathfinding algorithm visualizer" onclick="window.location.href='/tools/pathfinding-visualizer/'">
+              <img src={getPictureByIndex(0)} alt="Pathfinding Visualizer" />
+              <div class="card-content">
+                <h3>Pathfinding Visualizer</h3>
+                <p>路径寻找算法可视化演示</p>
+              </div>
+            </div>
             {firstPageTools.map((tool, index) => {
               const title = tool.data.title || tool.slug;
               const desc = tool.data.description || '';
-              const cover = tool.data.cover || getPictureByIndex(index);
+              const cover = tool.data.cover || getPictureByIndex(index + 1);
               const urlSlug = tool.data.slug || tool.slug;
               return (
                 <div class="card" data-slug={urlSlug} data-title={title.toLowerCase()} data-desc={desc.toLowerCase()} onclick="navigateTo('/tool/' + this.dataset.slug)">
@@ -201,6 +208,10 @@ const firstPageTools = tools.slice(0, toolsPerPage);
         var cachedCards = [];
         for (var i = 0; i < firstPageCards.length; i++) {
             var card = firstPageCards[i];
+            if (card.dataset.slug === 'pathfinding-visualizer') {
+                cachedCards.push(card);
+                continue;
+            }
             (function(c) {
                 c.addEventListener('click', function() {
                     sessionStorage.setItem('toolsPage', String(currentPage));
