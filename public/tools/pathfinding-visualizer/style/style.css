@@ -310,3 +310,130 @@ nav{
         grid-column: 1/-1;
     }
 }
+
+/* ===== 移动端适配 ===== */
+@media screen and (max-width: 768px) {
+    body {
+        overflow: hidden;
+    }
+
+    .template {
+        grid-gap: 4px;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 4px 6px;
+        gap: 4px;
+        justify-content: center;
+    }
+
+    .logo {
+        font-size: 14px;
+        padding: 0 8px;
+        order: -1;
+        width: 100%;
+        text-align: center;
+    }
+
+    #visualize {
+        padding: 6px 12px;
+        font-size: 13px;
+        order: -1;
+    }
+
+    .nav-menu {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 2px;
+    }
+
+    .nav-menu > li > a {
+        padding: 5px 8px;
+        font-size: 12px;
+    }
+
+    .drop-box .drop-menu {
+        top: calc(100% + 5px);
+    }
+
+    .guide-bar {
+        gap: 8px;
+        padding: 4px 6px;
+        font-size: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .guide-bar > li .text {
+        font-size: 11px;
+    }
+
+    .icon {
+        width: 16px;
+    }
+
+    /* 教程卡片移动端 */
+    .card {
+        margin: 4px;
+        max-width: 95vw;
+    }
+
+    .card .upper {
+        min-height: 280px;
+    }
+
+    .slide .img-box {
+        height: 120px;
+        width: 120px;
+    }
+
+    .slide p {
+        margin: 0 15px;
+        font-size: 12px;
+    }
+
+    .slide h4 {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+
+    .upper .slide {
+        padding: 20px 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .logo {
+        font-size: 12px;
+    }
+
+    .nav-menu > li > a {
+        padding: 4px 6px;
+        font-size: 11px;
+    }
+
+    .guide-bar {
+        gap: 6px;
+        font-size: 10px;
+    }
+
+    .guide-bar > li .text {
+        font-size: 10px;
+    }
+
+    .icon {
+        width: 14px;
+    }
+
+    .card .upper {
+        min-height: 240px;
+    }
+
+    .slide .img-box {
+        height: 100px;
+        width: 100px;
+    }
+}
