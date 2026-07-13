@@ -352,6 +352,7 @@ var wallToAnimate;
 const clearPathBrn = document.getElementById('clearPath');
 const clearBoardBtn = document.getElementById('clearBoard');
 const generateMazeBtn = document.getElementById('generateMazeBtn');
+const generatePosterBtn = document.getElementById('generatePosterBtn');
 
 
 clearPathBrn.addEventListener('click',clearPath);
@@ -364,6 +365,175 @@ generateMazeBtn.addEventListener('click', ()=>{
     animate(wallToAnimate, 'wall');
    
 });
+
+// ===== 生成海报（文字迷宫） =====
+generatePosterBtn.addEventListener('click', ()=>{
+    clearBoard();
+    const text = "石家庄最屌的兵来了";
+    const posterWalls = generateTextPoster(text);
+    animate(posterWalls, 'wall');
+    // 动画完成后显示烟花
+    setTimeout(() => {
+        launchFireworks();
+    }, posterWalls.length * SPEEDS[speed] * 0.005 + 200);
+});
+
+/**
+ * 将文字渲染为网格墙壁
+ * 使用隐藏canvas绘制文字，然后采样像素映射到网格单元
+ */
+function generateTextPoster(text) {
+    const walls = [];
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 设置canvas尺寸为网格大小
+    const cellW = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--cell-width'));
+    const gridW = col * cellW;
+    const gridH = row * cellW;
+
+    canvas.width = gridW;
+    canvas.height = gridH;
+
+    // 绘制黑色背景
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, gridW, gridH);
+
+    // 计算合适的字体大小
+    const fontSize = Math.floor(gridH * 0.6);
+    ctx.font = `bold ${fontSize}px "Microsoft YaHei", sans-serif`;
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // 文字居中绘制
+    ctx.fillText(text, gridW / 2, gridH / 2);
+
+    // 采样像素，映射到网格
+    const imageData = ctx.getImageData(0, 0, gridW, gridH);
+    const data = imageData.data;
+
+    // 每个网格单元采样中心点
+    for (let r = 0; r < row; r++) {
+        for (let c = 0; c < col; c++) {
+            const px = Math.floor((c + 0.5) * cellW);
+            const py = Math.floor((r + 0.5) * cellW);
+            const idx = (py * gridW + px) * 4;
+            // 如果像素是白色（文字部分），则设为墙壁
+            if (data[idx] > 128) {
+                walls.push(matrix[r][c]);
+            }
+        }
+    }
+
+    return walls;
+}
+
+/**
+ * 烟花效果 - 在网格上显示5秒
+ */
+function launchFireworks() {
+    const fireworksCanvas = document.createElement('canvas');
+    fireworksCanvas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+    `;
+    document.body.appendChild(fireworksCanvas);
+
+    const fCtx = fireworksCanvas.getContext('2d');
+    fireworksCanvas.width = window.innerWidth;
+    fireworksCanvas.height = window.innerHeight;
+
+    const particles = [];
+    const colors = ['#ff0040', '#ff8000', '#ffff00', '#00ff00', '#00ffff', '#0080ff', '#ff00ff', '#ffffff'];
+
+    function createFirework(x, y) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const count = 40 + Math.floor(Math.random() * 30);
+        for (let i = 0; i < count; i++) {
+            const angle = (Math.PI * 2 * i) / count;
+            const speed = 2 + Math.random() * 4;
+            particles.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 60 + Math.random() * 40,
+                maxLife: 100,
+                color: color,
+                size: 2 + Math.random() * 2
+            });
+        }
+    }
+
+    // 随机发射烟花
+    let fireworkInterval = setInterval(() => {
+        const x = Math.random() * fireworksCanvas.width;
+        const y = Math.random() * fireworksCanvas.height * 0.6;
+        createFirework(x, y);
+    }, 300);
+
+    // 初始发射几个
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            createFirework(
+                Math.random() * fireworksCanvas.width,
+                Math.random() * fireworksCanvas.height * 0.5
+            );
+        }, i * 200);
+    }
+
+    function animateFireworks() {
+        fCtx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+        fCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.05; // 重力
+            p.life--;
+
+            const alpha = p.life / p.maxLife;
+            fCtx.globalAlpha = alpha;
+            fCtx.fillStyle = p.color;
+            fCtx.beginPath();
+            fCtx.arc(p.x, p.y, p.size * alpha, 0, Math.PI * 2);
+            fCtx.fill();
+
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+
+        if (particles.length > 0 || fireworkInterval) {
+            requestAnimationFrame(animateFireworks);
+        }
+    }
+
+    animateFireworks();
+
+    // 5秒后清除
+    setTimeout(() => {
+        clearInterval(fireworkInterval);
+        fireworkInterval = null;
+        // 淡出效果
+        let fadeOut = setInterval(() => {
+            fCtx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            fCtx.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+        }, 50);
+
+        setTimeout(() => {
+            clearInterval(fadeOut);
+            fireworksCanvas.remove();
+        }, 500);
+    }, 5000);
+}
 
 /**
  * Recursively generates a maze within the given grid boundaries using a randomized 
